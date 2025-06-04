@@ -38,6 +38,7 @@ export default [
       "react/react-in-jsx-scope": "off",
       "react-refresh/only-export-components": "off",
       "react/prop-types": "off",
+      "comma-dangle": "off",
     },
     settings: {
       react: {
