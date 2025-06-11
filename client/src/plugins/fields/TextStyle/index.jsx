@@ -1,5 +1,6 @@
 import FieldGroup from "@/components/FieldGroup";
-import Select from "@/components/Select";
+import StepSelect from "@/components/StepSelect";
+import { PiTextAa, PiTextB } from "react-icons/pi";
 
 export const meta = {
   fieldType: "textStyle",
@@ -12,7 +13,7 @@ export const meta = {
 export default function TextStyle({ value, onChange }) {
   return (
     <FieldGroup label="Text">
-      <Select
+      <StepSelect
         value={value.fontSize}
         items={[
           { value: "xs", label: "Extra Small" },
@@ -24,8 +25,9 @@ export default function TextStyle({ value, onChange }) {
         onChange={(fontSize) => onChange({ ...value, fontSize })}
         variant="subtle"
         size="sm"
+        startElement={<PiTextAa />}
       />
-      <Select
+      <StepSelect
         value={value.fontWeight}
         items={[
           { value: "normal", label: "Normal" },
@@ -36,6 +38,7 @@ export default function TextStyle({ value, onChange }) {
         onChange={(fontWeight) => onChange({ ...value, fontWeight })}
         variant="subtle"
         size="sm"
+        startElement={<PiTextB />}
       />
     </FieldGroup>
   );
