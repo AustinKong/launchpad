@@ -1,8 +1,8 @@
 import { createMapper } from "@/utils/mappers";
-import { Text } from "@chakra-ui/react";
+import { Heading as ChakraHeading } from "@chakra-ui/react";
 
 export const meta = {
-  blockType: "paragraph",
+  blockType: "heading",
   defaultConfig: {
     text: "Lorem ipsum dolor sit amet.",
     textStyle: { fontSize: "md", fontWeight: "normal" },
@@ -16,38 +16,38 @@ export const meta = {
   icon: <>Bla</>,
 };
 
-export default function Paragraph({ config }) {
+export default function Heading({ config }) {
   const { text, textStyle, textAlign } = config;
   const { fontSize, fontWeight } = textStyle;
 
   const fontWeightMapper = createMapper(
     {
-      normal: "normal",
-      medium: "medium",
-      semibold: "semibold",
-      bold: "bold",
+      normal: "medium",
+      medium: "semibold",
+      semibold: "bold",
+      bold: "extrabold",
     },
-    "normal",
+    "medium",
   );
 
   const fontSizeMapper = createMapper(
     {
-      xs: "xs",
-      sm: "sm",
-      md: "md",
-      lg: "lg",
-      xl: "xl",
+      xs: "lg",
+      sm: "xl",
+      md: "2xl",
+      lg: "3xl",
+      xl: "4xl",
     },
-    "md",
+    "2xl",
   );
 
   return (
-    <Text
-      fontSize={fontSizeMapper(fontSize)}
+    <ChakraHeading
+      textStyle={fontSizeMapper(fontSize)}
       fontWeight={fontWeightMapper(fontWeight)}
       textAlign={textAlign}
     >
       {text}
-    </Text>
+    </ChakraHeading>
   );
 }

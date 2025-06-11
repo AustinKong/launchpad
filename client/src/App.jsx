@@ -5,7 +5,7 @@ import Editor from "@/components/Editor";
 
 // For testing
 const DB_BLOCKS = [
-  { id: "1", blockType: "paragraph", config: { text: "This is my first paragraph." } },
+  { id: "1", blockType: "heading", config: { text: "The cake is a lie!" } },
   { id: "2", blockType: "paragraph", config: { text: "This is my second paragraph." } },
 ];
 
