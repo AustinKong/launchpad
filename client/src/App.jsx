@@ -5,21 +5,22 @@ import Editor from "@/components/Editor";
 
 // For testing
 const DB_BLOCKS = [
-  { id: "1", blockType: "heading", config: { text: "The cake is a lie!" } },
+  {
+    id: "1",
+    blockType: "heading",
+    config: { text: "The cake is a lie!", textStyle: { fontSize: "xl", fontWeight: "bold" } },
+  },
   { id: "2", blockType: "paragraph", config: { text: "This is my second paragraph." } },
+  {
+    id: "3",
+    blockType: "paragraph",
+    config: { text: "This is my third paragraph. I love ducks. I love React, I love Express." },
+  },
 ];
 
 function App() {
   const [blockData, setBlockData] = useState(null);
   const [selectedBlockId, setSelectedBlockId] = useState(null);
-
-  const onConfigChange = (blockId, fieldKey, value) => {
-    setBlockData((prevData) =>
-      prevData.map((block) =>
-        block.id === blockId ? { ...block, config: { ...block.config, [fieldKey]: value } } : block,
-      ),
-    );
-  };
 
   // Simulate fetching blocks from a database
   useEffect(() => {
@@ -41,10 +42,14 @@ function App() {
 
   return (
     <HStack h="100vh" spacing={0}>
-      <Workspace blockData={blockData} setSelectedBlockId={setSelectedBlockId} />
+      <Workspace
+        blockData={blockData}
+        setBlockData={setBlockData}
+        setSelectedBlockId={setSelectedBlockId}
+      />
       <Editor
         blockData={blockData.find((block) => block.id === selectedBlockId)}
-        onConfigChange={onConfigChange}
+        setBlockData={setBlockData}
       />
     </HStack>
   );
