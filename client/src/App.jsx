@@ -1,34 +1,57 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useState, useEffect } from "react";
+import { Center, HStack, Loader } from "@chakra-ui/react";
+import Workspace from "@/components/Workspace";
+import Editor from "@/components/Editor";
+
+// For testing
+const DB_BLOCKS = [
+  {
+    id: "1",
+    blockType: "heading",
+    config: { text: "The cake is a lie!", textStyle: { fontSize: "xl", fontWeight: "bold" } },
+  },
+  { id: "2", blockType: "paragraph", config: { text: "This is my second paragraph." } },
+  {
+    id: "3",
+    blockType: "paragraph",
+    config: { text: "This is my third paragraph. I love ducks. I love React, I love Express." },
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [blockData, setBlockData] = useState(null);
+  const [selectedBlockId, setSelectedBlockId] = useState(null);
+
+  // Simulate fetching blocks from a database
+  useEffect(() => {
+    (async () => {
+      const fetchedBlockData = await new Promise((resolve) => {
+        setTimeout(() => resolve(DB_BLOCKS), 1);
+      });
+      setBlockData(fetchedBlockData);
+    })();
+  }, []);
+
+  if (!blockData) {
+    return (
+      <Center h="100vh">
+        <Loader />
+      </Center>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <HStack h="100vh" spacing={0}>
+      <Workspace
+        blockData={blockData}
+        setBlockData={setBlockData}
+        setSelectedBlockId={setSelectedBlockId}
+      />
+      <Editor
+        blockData={blockData.find((block) => block.id === selectedBlockId)}
+        setBlockData={setBlockData}
+      />
+    </HStack>
   );
 }
 
