@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Center, HStack, Loader } from "@chakra-ui/react";
-import Workspace from "@/components/Workspace";
-import Editor from "@/components/Editor";
+import Workspace from "@/features/editor/Workspace";
+import Editor from "@/features/editor/Editor";
 
 // For testing
 const DB_BLOCKS = [

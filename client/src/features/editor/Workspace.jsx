@@ -3,7 +3,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
 import { deepMerge } from "@/utils/objectUtils";
-import Registry from "@/models/registry";
+import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { useState } from "react";
 import {
   arrayMove,
@@ -61,8 +61,8 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
             strategy={verticalListSortingStrategy}
           >
             {blockData.map((blockData) => {
-              const Component = Registry.blocks()[blockData.blockType].Component;
-              const { defaultConfig } = Registry.blocks()[blockData.blockType].meta;
+              const Component = blockRegistry[blockData.blockType].Component;
+              const { defaultConfig } = blockRegistry[blockData.blockType].meta;
               const config = deepMerge(defaultConfig, blockData.config);
 
               return (
@@ -78,7 +78,7 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
         {draggedBlockId &&
           (() => {
             const draggedBlock = blockData.find((block) => block.id === draggedBlockId);
-            const icon = Registry.blocks()[draggedBlock.blockType].meta.icon;
+            const icon = blockRegistry[draggedBlock.blockType].meta.icon;
             return (
               <Box h="fit-content" w="fit-content">
                 {icon}

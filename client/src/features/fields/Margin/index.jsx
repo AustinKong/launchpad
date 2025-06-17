@@ -1,6 +1,6 @@
 import { PiAlignLeft, PiAlignRight } from "react-icons/pi";
 import { HStack } from "@chakra-ui/react";
-import FieldGroup from "@/components/FieldGroup";
+import Fieldset from "@/components/Fieldset";
 import StepSelect from "@/components/StepSelect";
 
 export const meta = {
@@ -9,7 +9,7 @@ export const meta = {
 
 export default function Margin({ value, onChange }) {
   return (
-    <FieldGroup label="Margin">
+    <Fieldset label="Margin">
       <HStack spacing={2}>
         <StepSelect
           value={value.left}
@@ -40,6 +40,6 @@ export default function Margin({ value, onChange }) {
           startElement={<PiAlignRight />}
         />
       </HStack>
-    </FieldGroup>
+    </Fieldset>
   );
 }

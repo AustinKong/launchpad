@@ -1,5 +1,5 @@
 import { Collapsible, Heading, VStack, Text } from "@chakra-ui/react";
-import Registry from "@/models/registry";
+import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { deepMerge } from "@/utils/objectUtils";
 
 export default function Editor({ blockData, setBlockData }) {
@@ -16,7 +16,7 @@ export default function Editor({ blockData, setBlockData }) {
   };
 
   const { id, blockType, config: blockConfig } = blockData;
-  const { fields, defaultConfig } = Registry.blocks()[blockType].meta;
+  const { fields, defaultConfig } = blockRegistry[blockType].meta;
   // In case any part of config is missing in database, we merge it with defaultConfig
   const config = deepMerge(defaultConfig, blockConfig);
   const groupedFields = fields.reduce((acc, { group, ...field }) => {
@@ -40,7 +40,7 @@ export default function Editor({ blockData, setBlockData }) {
               <Collapsible.Content p="2">
                 <VStack gap="2" w="full">
                   {fields.map((field) => {
-                    const FieldComponent = Registry.fields()[field.fieldType].Component;
+                    const FieldComponent = fieldRegistry[field.fieldType].Component;
                     return (
                       <FieldComponent
                         key={field.key}

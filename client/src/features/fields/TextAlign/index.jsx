@@ -1,5 +1,5 @@
 import { SegmentGroup } from "@chakra-ui/react";
-import FieldGroup from "@/components/FieldGroup";
+import Fieldset from "@/components/Fieldset";
 import {
   PiTextAlignCenter,
   PiTextAlignJustify,
@@ -20,11 +20,11 @@ export default function TextAlign({ value, onChange }) {
   ];
 
   return (
-    <FieldGroup label="Align">
+    <Fieldset label="Align">
       <SegmentGroup.Root value={value} onValueChange={(e) => onChange(e.value)} size="sm">
         <SegmentGroup.Indicator />
         <SegmentGroup.Items items={items} w="full" />
       </SegmentGroup.Root>
-    </FieldGroup>
+    </Fieldset>
   );
 }
