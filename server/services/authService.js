@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import prisma from "#prisma/prismaClient.js";
 import ApiError from "#utils/ApiError.js";
-import { signAccess, signRefresh } from "#utils/jwt.js";
+import { signAccess, signRefresh, verifyRefresh } from "#utils/jwt.js";
 
 export async function login(email, password) {
   const user = await prisma.user.findUnique({
@@ -17,19 +17,12 @@ export async function login(email, password) {
   }
 
   const payload = {
-    id: user.id,
-    email: user.email,
+    sub: user.id,
   };
 
   return {
-    user: {
-      id: user.id,
-      email: user.email,
-    },
-    tokens: {
-      accessToken: signAccess(payload),
-      refreshToken: signRefresh(payload),
-    },
+    accessToken: signAccess(payload),
+    refreshToken: signRefresh(payload),
   };
 }
 
@@ -46,19 +39,12 @@ export async function registerWithEmail(email, password) {
     });
 
     const payload = {
-      id: user.id,
-      email: user.email,
+      sub: user.id,
     };
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-      tokens: {
-        accessToken: signAccess(payload),
-        refreshToken: signRefresh(payload),
-      },
+      accessToken: signAccess(payload),
+      refreshToken: signRefresh(payload),
     };
   } catch (err) {
     if (err.code === "P2002") {
@@ -66,6 +52,15 @@ export async function registerWithEmail(email, password) {
     }
     throw new ApiError(500, "Internal server error", err.message);
   }
+}
+
+export async function refreshTokens(oldRefreshToken) {
+  const payload = verifyRefresh(oldRefreshToken);
+
+  return {
+    accessToken: signAccess(payload),
+    refreshToken: signRefresh(payload),
+  };
 }
 
 export async function registerWithGoogle(email, providerAccountId) {

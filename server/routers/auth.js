@@ -1,62 +1,48 @@
 import express from "express";
 import asyncHandler from "#utils/asyncHandler.js";
-import requestValidator from "#middleware/requestValidator.js";
-import { login, registerWithEmail } from "#services/authService.js";
-import { z } from "zod";
-import { signAccess, signRefresh } from "#utils/jwt.js";
+import validateRequest from "#middleware/validateRequest.js";
+import { registerSchema, loginSchema, refreshSchema } from "#schemas/auth";
+import {
+  login,
+  registerWithEmail,
+  refreshTokens,
+} from "#services/authService.js";
 
 const router = express.Router();
 
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
 router.post(
   "/register",
-  requestValidator(registerSchema),
+  validateRequest(registerSchema),
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { user, tokens } = await registerWithEmail(email, password);
-    const { accessToken, refreshToken } = tokens;
+    const { accessToken, refreshToken } = await registerWithEmail(
+      email,
+      password
+    );
 
     setAuthCookies(res, { accessToken, refreshToken });
-    res.status(201).json({ user });
+    res.sendStatus(201);
   })
 );
 
 router.post(
   "/login",
-  requestValidator(loginSchema),
+  validateRequest(loginSchema),
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { user, tokens } = await login(email, password);
-    const { accessToken, refreshToken } = tokens;
+    const { accessToken, refreshToken } = await login(email, password);
 
     setAuthCookies(res, { accessToken, refreshToken });
-    res.status(200).json({ user });
+    res.sendStatus(200);
   })
 );
 
 router.post(
   "/refresh",
+  validateRequest(refreshSchema),
   asyncHandler(async function (req, res) {
     const oldRefreshToken = req.cookies.refreshToken;
-    if (!oldRefreshToken) {
-      throw new ApiError(401, "Refresh token missing");
-    }
-
-    const payload = verifyRefresh(oldRefreshToken);
-    const accessToken = signAccess({ id: payload.id, email: payload.email });
-    const refreshToken = signRefresh({
-      id: payload.id,
-      email: payload.email,
-    });
+    const { accessToken, refreshToken } = await refreshTokens(oldRefreshToken);
 
     setAuthCookies(res, { accessToken, refreshToken });
     res.sendStatus(200);
