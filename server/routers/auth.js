@@ -1,9 +1,9 @@
 import express from "express";
-import asyncHandler from "../utils/asyncHandler.js";
-import requestValidator from "../middleware/requestValidator.js";
-import { login, registerWithEmail } from "../services/authService.js";
+import asyncHandler from "#utils/asyncHandler.js";
+import requestValidator from "#middleware/requestValidator.js";
+import { login, registerWithEmail } from "#services/authService.js";
 import { z } from "zod";
-import { signAccess } from "../utils/jwt.js";
+import { signAccess, signRefresh } from "#utils/jwt.js";
 
 const router = express.Router();
 

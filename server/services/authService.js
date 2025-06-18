@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
-import prisma from "../prisma/prismaClient.js";
-import ApiError from "../utils/ApiError.js";
-import { signAccess, signRefresh } from "../utils/jwt.js";
+import prisma from "#prisma/prismaClient.js";
+import ApiError from "#utils/ApiError.js";
+import { signAccess, signRefresh } from "#utils/jwt.js";
 
 export async function login(email, password) {
   const user = await prisma.user.findUnique({

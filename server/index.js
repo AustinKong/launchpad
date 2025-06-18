@@ -4,9 +4,9 @@ import cors from "cors";
 const app = express();
 dotenv.config();
 
-import authRouter from "./routers/auth.js";
-import errorHandler from "./middleware/errorHandler.js";
-import logger from "./middleware/logger.js";
+import authRouter from "#routers/auth.js";
+import errorHandler from "#middleware/errorHandler.js";
+import logger from "#middleware/logger.js";
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(json());

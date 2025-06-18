@@ -26,5 +26,12 @@
     "nodemon": "^3.1.10",
     "prisma": "^6.9.0"
   },
-  "type": "module"
+  "type": "module",
+  "imports": {
+    "#routers/*": "./routers/*",
+    "#middleware/*": "./middleware/*",
+    "#utils/*": "./utils/*",
+    "#services/*": "./services/*",
+    "#prisma/*": "./prisma/*"
+  }
 }

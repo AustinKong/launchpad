@@ -1,4 +1,4 @@
-import ApiError from "../utils/ApiError.js";
+import ApiError from "#utils/ApiError.js";
 
 function errorHandler(err, req, res, next) {
   if (err instanceof ApiError && err.statusCode < 500) {

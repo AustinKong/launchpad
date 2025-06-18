@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import ApiError from "./ApiError.js";
+import ApiError from "#utils/ApiError.js";
 
 const ACCESS_TTL = "3h";
 const REFRESH_TTL = "7d";
