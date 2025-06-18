@@ -1,9 +1,9 @@
 import express from "express";
-import asyncHandler from "../utils/asyncHandler";
-import requestValidator from "../middleware/requestValidator";
-import { login, registerWithEmail } from "../services/authService";
+import asyncHandler from "../utils/asyncHandler.js";
+import requestValidator from "../middleware/requestValidator.js";
+import { login, registerWithEmail } from "../services/authService.js";
 import { z } from "zod";
-import { signAccess } from "../utils/jwt";
+import { signAccess } from "../utils/jwt.js";
 
 const router = express.Router();
 
@@ -85,3 +85,5 @@ function setAuthCookies(res, { access, refresh }) {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }
+
+export default router;
