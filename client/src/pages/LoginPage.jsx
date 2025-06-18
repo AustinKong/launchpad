@@ -4,12 +4,12 @@ import { useState } from "react";
 import { PiGoogleLogoBold } from "react-icons/pi";
 import LabeledSeparator from "@/components/LabeledSeparator";
 import { useAsyncRequest } from "@/hooks/useAsyncRequest";
-import { registerWithEmail } from "@/services/authService";
+import { login } from "@/services/authService";
 import { useNavigate } from "react-router";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const navigate = useNavigate();
-  const { run: register, isLoading: registerIsLoading } = useAsyncRequest(registerWithEmail, {
+  const { run: loginWithEmail, isLoading: loginIsLoading } = useAsyncRequest(login, {
     onSuccess: () => {
       navigate("/");
     },
@@ -20,7 +20,7 @@ export default function RegisterPage() {
   return (
     <VStack w="30%" alignItems="stretch" h="fit-content">
       <Heading size="2xl" textAlign="center">
-        Register
+        Login
       </Heading>
       <Field.Root>
         <Field.Label>Email</Field.Label>
@@ -38,8 +38,8 @@ export default function RegisterPage() {
           placeholder="Enter your password"
         />
       </Field.Root>
-      <Button onClick={() => register(email, password)} loading={registerIsLoading}>
-        Sign up
+      <Button onClick={() => loginWithEmail(email, password)} loading={loginIsLoading}>
+        Login
       </Button>
       <LabeledSeparator label="or" color="fg.subtle" my="2" />
       <Button variant="outline">

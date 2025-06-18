@@ -20,10 +20,12 @@ const loginSchema = z.object({
 router.post(
   "/register",
   requestValidator(registerSchema),
-  asyncHandler(function (req, res) {
+  asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { user, tokens } = registerWithEmail(email, password);
-    setAuthCookies(res, tokens);
+    const { user, tokens } = await registerWithEmail(email, password);
+    const { accessToken, refreshToken } = tokens;
+
+    setAuthCookies(res, { accessToken, refreshToken });
     res.status(201).json({ user });
   })
 );
@@ -34,7 +36,9 @@ router.post(
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
     const { user, tokens } = await login(email, password);
-    setAuthCookies(res, tokens);
+    const { accessToken, refreshToken } = tokens;
+
+    setAuthCookies(res, { accessToken, refreshToken });
     res.status(200).json({ user });
   })
 );
@@ -42,22 +46,19 @@ router.post(
 router.post(
   "/refresh",
   asyncHandler(async function (req, res) {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
+    const oldRefreshToken = req.cookies.refreshToken;
+    if (!oldRefreshToken) {
       throw new ApiError(401, "Refresh token missing");
     }
 
-    const payload = verifyRefresh(refreshToken);
-    const newAccessToken = signAccess({ id: payload.id, email: payload.email });
-    const newRefreshToken = signRefresh({
+    const payload = verifyRefresh(oldRefreshToken);
+    const accessToken = signAccess({ id: payload.id, email: payload.email });
+    const refreshToken = signRefresh({
       id: payload.id,
       email: payload.email,
     });
 
-    setAuthCookies(res, {
-      access: newAccessToken,
-      refresh: newRefreshToken,
-    });
+    setAuthCookies(res, { accessToken, refreshToken });
     res.sendStatus(200);
   })
 );
@@ -71,17 +72,19 @@ router.post(
   })
 );
 
-function setAuthCookies(res, { access, refresh }) {
-  res.cookie("accessToken", access, {
+function setAuthCookies(res, { accessToken, refreshToken }) {
+  res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+    path: "/",
     maxAge: 3 * 60 * 60 * 1000, // 3 hours
   });
-  res.cookie("refreshToken", refresh, {
+  res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+    path: "/refresh",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }

@@ -66,8 +66,13 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
               const config = deepMerge(defaultConfig, blockData.config);
 
               return (
-                <BlockWrapper id={blockData.id} key={blockData.id} draggedBlockId={draggedBlockId}>
-                  <Component config={config} onClick={() => setSelectedBlockId(blockData.id)} />
+                <BlockWrapper
+                  id={blockData.id}
+                  key={blockData.id}
+                  draggedBlockId={draggedBlockId}
+                  setSelectedBlockId={setSelectedBlockId}
+                >
+                  <Component config={config} />
                 </BlockWrapper>
               );
             })}
@@ -90,7 +95,7 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
   );
 }
 
-function BlockWrapper({ id, draggedBlockId, children }) {
+function BlockWrapper({ id, draggedBlockId, setSelectedBlockId, children }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id,
   });
@@ -109,6 +114,10 @@ function BlockWrapper({ id, draggedBlockId, children }) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
+      onPointerDown={(e) => {
+        setSelectedBlockId(id);
+        listeners.onPointerDown(e);
+      }}
       tabIndex={0}
       style={style}
       bgColor={isDragging ? "bg.emphasized" : "transparent"}

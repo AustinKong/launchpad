@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum AuthMethod {
-  EMAIL
-  GOOGLE
-  GITHUB
-}
-
 model User {
   id                String     @id @default(uuid())
   email             String     @unique
@@ -22,4 +16,10 @@ model User {
   createdAt         DateTime   @default(now())
 
   @@unique([authMethod, providerAccountId])
+}
+
+enum AuthMethod {
+  EMAIL
+  GOOGLE
+  GITHUB
 }

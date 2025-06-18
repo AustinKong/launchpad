@@ -38,12 +38,11 @@ export function fixedCursorSnapCollisionDetection(args) {
 }
 
 export function useSensors() {
-  useSensorsDndKit(
+  return useSensorsDndKit(
     useSensor(PointerSensor, {
       activationConstraint: {
         delay: 150,
-        distance: 5,
-        tolerance: 5,
+        tolerance: 300,
       },
     }),
   );
