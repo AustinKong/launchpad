@@ -1,8 +1,8 @@
-const blockModules = import.meta.glob("../plugins/blocks/*/index.jsx", { eager: true });
-const fieldModules = import.meta.glob("../plugins/fields/*/index.jsx", { eager: true });
+const blockModules = import.meta.glob("../features/blocks/*/index.jsx", { eager: true });
+const fieldModules = import.meta.glob("../features/fields/*/index.jsx", { eager: true });
 
-const blockRegistry = {};
-const fieldRegistry = {};
+export const blockRegistry = {};
+export const fieldRegistry = {};
 
 for (const path in blockModules) {
   const module = blockModules[path];
@@ -29,10 +29,3 @@ for (const path in fieldModules) {
     meta,
   };
 }
-
-const Registry = {
-  blocks: () => blockRegistry,
-  fields: () => fieldRegistry,
-};
-
-export default Registry;

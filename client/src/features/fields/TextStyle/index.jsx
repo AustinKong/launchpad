@@ -1,4 +1,4 @@
-import FieldGroup from "@/components/FieldGroup";
+import Fieldset from "@/components/Fieldset";
 import StepSelect from "@/components/StepSelect";
 import { PiTextAa, PiTextB } from "react-icons/pi";
 
@@ -12,7 +12,7 @@ export const meta = {
 // changing the field's values.
 export default function TextStyle({ value, onChange }) {
   return (
-    <FieldGroup label="Text">
+    <Fieldset label="Text">
       <StepSelect
         value={value.fontSize}
         items={[
@@ -40,6 +40,6 @@ export default function TextStyle({ value, onChange }) {
         size="sm"
         startElement={<PiTextB />}
       />
-    </FieldGroup>
+    </Fieldset>
   );
 }

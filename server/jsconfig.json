@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#routers/*": ["./routers/*"],
+      "#middleware/*": ["./middleware/*"],
+      "#utils/*": ["./utils/*"],
+      "#services/*": ["./services/*"],
+      "#prisma/*": ["./prisma/*"]
+    }
+  },
+  "include": ["./**/*.js"]
+}

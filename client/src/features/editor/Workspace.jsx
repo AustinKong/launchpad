@@ -3,7 +3,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
 import { deepMerge } from "@/utils/objectUtils";
-import Registry from "@/models/registry";
+import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { useState } from "react";
 import {
   arrayMove,
@@ -61,13 +61,18 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
             strategy={verticalListSortingStrategy}
           >
             {blockData.map((blockData) => {
-              const Component = Registry.blocks()[blockData.blockType].Component;
-              const { defaultConfig } = Registry.blocks()[blockData.blockType].meta;
+              const Component = blockRegistry[blockData.blockType].Component;
+              const { defaultConfig } = blockRegistry[blockData.blockType].meta;
               const config = deepMerge(defaultConfig, blockData.config);
 
               return (
-                <BlockWrapper id={blockData.id} key={blockData.id} draggedBlockId={draggedBlockId}>
-                  <Component config={config} onClick={() => setSelectedBlockId(blockData.id)} />
+                <BlockWrapper
+                  id={blockData.id}
+                  key={blockData.id}
+                  draggedBlockId={draggedBlockId}
+                  setSelectedBlockId={setSelectedBlockId}
+                >
+                  <Component config={config} />
                 </BlockWrapper>
               );
             })}
@@ -78,7 +83,7 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
         {draggedBlockId &&
           (() => {
             const draggedBlock = blockData.find((block) => block.id === draggedBlockId);
-            const icon = Registry.blocks()[draggedBlock.blockType].meta.icon;
+            const icon = blockRegistry[draggedBlock.blockType].meta.icon;
             return (
               <Box h="fit-content" w="fit-content">
                 {icon}
@@ -90,7 +95,7 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
   );
 }
 
-function BlockWrapper({ id, draggedBlockId, children }) {
+function BlockWrapper({ id, draggedBlockId, setSelectedBlockId, children }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id,
   });
@@ -109,6 +114,10 @@ function BlockWrapper({ id, draggedBlockId, children }) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
+      onPointerDown={(e) => {
+        setSelectedBlockId(id);
+        listeners.onPointerDown(e);
+      }}
       tabIndex={0}
       style={style}
       bgColor={isDragging ? "bg.emphasized" : "transparent"}
