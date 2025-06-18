@@ -7,19 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                String     @id @default(uuid())
-  email             String     @unique
-  authMethod        AuthMethod
-  passwordHash      String?
-  providerAccountId String?
-  createdAt         DateTime   @default(now())
-
-  @@unique([authMethod, providerAccountId])
-}
-
 enum AuthMethod {
   EMAIL
   GOOGLE
   GITHUB
+}
+
+model User {
+  id                String     @id @default(uuid())
+  createdAt         DateTime   @default(now())
+  authMethod        AuthMethod
+  email             String     @unique
+  passwordHash      String?
+  providerAccountId String?
+
+  cards Card[] @relation()
+
+  @@unique([authMethod, providerAccountId])
+}
+
+model Card {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  title     String
+  slug      String   @unique
+
+  userId String
+  user   User    @relation(fields: [userId], references: [id])
+  Theme  Theme?
+  Block  Block[]
+}
+
+model Theme {
+  createdAt DateTime @default(now())
+  config    Json
+
+  cardId String @id
+  card   Card   @relation(fields: [cardId], references: [id])
+}
+
+model Block {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  type      String
+  order     Int
+  config    Json
+
+  cardId String
+  card   Card   @relation(fields: [cardId], references: [id])
+
+  @@index([cardId])
 }

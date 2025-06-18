@@ -1,7 +1,7 @@
 import express from "express";
 import asyncHandler from "#utils/asyncHandler.js";
 import validateRequest from "#middleware/validateRequest.js";
-import { registerSchema, loginSchema, refreshSchema } from "#schemas/auth";
+import { registerSchema, loginSchema } from "#schemas/auth.js";
 import {
   login,
   registerWithEmail,
@@ -39,9 +39,8 @@ router.post(
 
 router.post(
   "/refresh",
-  validateRequest(refreshSchema),
   asyncHandler(async function (req, res) {
-    const oldRefreshToken = req.cookies.refreshToken;
+    const oldRefreshToken = req.cookies?.refreshToken;
     const { accessToken, refreshToken } = await refreshTokens(oldRefreshToken);
 
     setAuthCookies(res, { accessToken, refreshToken });
@@ -70,7 +69,7 @@ function setAuthCookies(res, { accessToken, refreshToken }) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
-    path: "/refresh",
+    path: "/", // FIXME: Cookie will not be supplied if set to "/auth/refresh", not sure if this has to do with vite's api/ proxy
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }

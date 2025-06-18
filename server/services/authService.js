@@ -55,7 +55,14 @@ export async function registerWithEmail(email, password) {
 }
 
 export async function refreshTokens(oldRefreshToken) {
-  const payload = verifyRefresh(oldRefreshToken);
+  if (!oldRefreshToken) {
+    throw new ApiError(401, "No refresh token provided");
+  }
+
+  const oldPaylod = verifyRefresh(oldRefreshToken);
+  const payload = {
+    sub: oldPaylod.sub,
+  };
 
   return {
     accessToken: signAccess(payload),
