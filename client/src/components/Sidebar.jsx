@@ -1,4 +1,5 @@
-import { VStack, HStack, Text, Icon } from "@chakra-ui/react";
+import { VStack, HStack, Text, Icon, Heading } from "@chakra-ui/react";
+import { PiRocketFill } from "react-icons/pi";
 import { NavLink } from "react-router";
 
 export default function Sidebar({ links }) {
@@ -13,6 +14,7 @@ export default function Sidebar({ links }) {
       p="2"
       gap="2"
     >
+      <AppLogo />
       {links.map(({ label, path, icon }) => {
         return (
           <NavLink to={path} key={path}>
@@ -34,5 +36,20 @@ export default function Sidebar({ links }) {
         );
       })}
     </VStack>
+  );
+}
+
+function AppLogo() {
+  return (
+    <NavLink to="/">
+      <HStack px="1" py="2" borderBottom="medium solid" borderColor="border">
+        <Icon size="lg">
+          <PiRocketFill />
+        </Icon>
+        <Heading as="h1" size="md">
+          Launchpad
+        </Heading>
+      </HStack>
+    </NavLink>
   );
 }

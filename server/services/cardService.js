@@ -20,3 +20,22 @@ export async function getCardById(cardId) {
 
   return card;
 }
+
+export async function createCard(userId, title, slug) {
+  try {
+    const card = await prisma.card.create({
+      data: {
+        userId,
+        title,
+        slug,
+      },
+    });
+
+    return card;
+  } catch (err) {
+    if (err.code === "P2002") {
+      throw new ApiError(400, "Card with this URL already exists");
+    }
+    throw new ApiError(500, "Internal server error", err.message);
+  }
+}
