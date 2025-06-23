@@ -1,5 +1,4 @@
 import CreateCardModal from "@/features/cardsPage/CreateCardModal";
-import { useAutoFetch } from "@/hooks/useAutoFetch";
 import { fetchCards } from "@/services/cardService";
 import {
   ButtonGroup,
@@ -16,16 +15,20 @@ import { PiEmpty } from "react-icons/pi";
 import { useModal } from "@/hooks/useModal";
 import { NavLink } from "react-router";
 import DecorativeBox from "@/components/DecorativeBox";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CardsPage() {
-  const { run, data: cards, isLoading } = useAutoFetch(fetchCards);
+  const { data: cards, isPending } = useQuery({
+    queryKey: ["cards"],
+    queryFn: fetchCards,
+  });
   const {
     isOpen: createCardModalIsOpen,
     open: openCreateCardModal,
     close: closeCreateCardModal,
   } = useModal();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Center>
         <Loader />
@@ -69,8 +72,8 @@ export default function CardsPage() {
             </Button>
           </HStack>
           <Wrap gap="4" mt="8">
-            {cards.map((card) => (
-              <VStack key={card.id} w="3xs">
+            {cards.map((card, index) => (
+              <VStack key={index} w="3xs">
                 <DecorativeBox h="2xs" />
                 <Link asChild>
                   <NavLink to={`/cards/${card.slug}/edit`}>{card.title}</NavLink>

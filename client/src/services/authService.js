@@ -1,11 +1,10 @@
-export async function registerWithEmail(email, password, options = {}) {
+export async function registerWithEmail({ email, password }) {
   const response = await fetch("/api/auth/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-    ...options,
   });
 
   if (!response.ok) {
@@ -13,14 +12,13 @@ export async function registerWithEmail(email, password, options = {}) {
   }
 }
 
-export async function login(email, password, options = {}) {
+export async function login({ email, password }) {
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-    ...options,
   });
 
   if (!response.ok) {

@@ -5,14 +5,12 @@ import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDr
 import { deepMerge } from "@/utils/objectUtils";
 import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { useState } from "react";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useBlockActions, useBlocks } from "@/stores/blockStore";
 
-export default function Workspace({ blockData, setBlockData, setSelectedBlockId }) {
+export default function Preview({ setSelectedBlockId }) {
+  const blocks = useBlocks();
+  const { reorderBlocks } = useBlockActions();
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
 
@@ -26,15 +24,7 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
     setDraggedBlockId(null);
 
     if (!over || active.id === over.id) return;
-    handleReorderBlocks(active.id, over.id);
-  };
-
-  const handleReorderBlocks = (activeId, overId) => {
-    setBlockData((prevData) => {
-      const activeIndex = prevData.findIndex((block) => block.id === activeId);
-      const overIndex = prevData.findIndex((block) => block.id === overId);
-      return arrayMove(prevData, activeIndex, overIndex);
-    });
+    reorderBlocks(active.id, over.id);
   };
 
   return (
@@ -57,10 +47,10 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
           role="list"
         >
           <SortableContext
-            items={blockData.map((block) => block.id)}
+            items={blocks.map((block) => block.id)}
             strategy={verticalListSortingStrategy}
           >
-            {blockData.map((blockData) => {
+            {blocks.map((blockData) => {
               const Component = blockRegistry[blockData.blockType].Component;
               const { defaultConfig } = blockRegistry[blockData.blockType].meta;
               const config = deepMerge(defaultConfig, blockData.config);
@@ -82,7 +72,7 @@ export default function Workspace({ blockData, setBlockData, setSelectedBlockId 
       <DragOverlay modifiers={[snapCenterToCursor]} dropAnimation={null}>
         {draggedBlockId &&
           (() => {
-            const draggedBlock = blockData.find((block) => block.id === draggedBlockId);
+            const draggedBlock = blocks.find((block) => block.id === draggedBlockId);
             const icon = blockRegistry[draggedBlock.blockType].meta.icon;
             return (
               <Box h="fit-content" w="fit-content">

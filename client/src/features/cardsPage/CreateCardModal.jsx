@@ -1,7 +1,7 @@
-import { useAsyncRequest } from "@/hooks/useAsyncRequest";
 import { createCard } from "@/services/cardService";
 import { Dialog, Portal, Field, Input, InputGroup, Button, VStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,6 +17,8 @@ const schema = z.object({
 });
 
 export default function CreateCardModal({ isOpen, onClose }) {
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
@@ -30,13 +32,21 @@ export default function CreateCardModal({ isOpen, onClose }) {
     },
   });
 
-  const { run, isLoading } = useAsyncRequest(createCard, {
-    onSuccess: () => {
+  const { mutate, isPending } = useMutation({
+    mutationFn: createCard,
+    onMutate: async (newCard) => {
+      await queryClient.cancelQueries({ queryKey: ["cards"] });
+      const previousCards = queryClient.getQueryData(["cards"]);
+      queryClient.setQueryData(["cards"], (old) => [...(old || []), newCard]);
+      return { previousCards };
+    },
+    onError: (error, newCard, context) => {
+      queryClient.setQueryData(["cards"], context.previousCards);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
       reset();
       onClose();
-    },
-    onError: (err) => {
-      console.error("Error creating card:", err);
     },
   });
 
@@ -46,18 +56,13 @@ export default function CreateCardModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  async function onSubmit(data) {
-    const { title, slug } = data;
-    run(title, slug);
-  }
-
   return (
     <Dialog.Root placement="center" size="md" open={isOpen}>
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(({ title, slug }) => mutate({ title, slug }))}>
               <Dialog.Header>
                 <Dialog.Title>Create a new card</Dialog.Title>
               </Dialog.Header>
@@ -84,10 +89,10 @@ export default function CreateCardModal({ isOpen, onClose }) {
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>
-                <Button variant="outline" onClick={onClose} disabled={isLoading}>
+                <Button variant="outline" onClick={onClose} disabled={isPending}>
                   Cancel
                 </Button>
-                <Button type="submit" isLoading={isLoading}>
+                <Button type="submit" isLoading={isPending}>
                   Save
                 </Button>
               </Dialog.Footer>

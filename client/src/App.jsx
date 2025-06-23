@@ -5,12 +5,13 @@ import RegisterPage from "@/pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import CardsPage from "./pages/CardsPage";
+import WorkspaceLayout from "./components/layouts/WorkspaceLayout";
 
 function App() {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
-        <Route index path="cards" element={<CardsPage />} />
+        <Route path="cards" element={<CardsPage />} />
       </Route>
 
       <Route path="auth" element={<AuthLayout />}>
@@ -18,7 +19,9 @@ function App() {
         <Route path="login" element={<LoginPage />} />
       </Route>
 
-      <Route path="editor" element={<EditorPage />} />
+      <Route path="cards/:slug" element={<WorkspaceLayout />}>
+        <Route path="edit" element={<EditorPage />} />
+      </Route>
     </Routes>
   );
 }

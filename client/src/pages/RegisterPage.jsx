@@ -3,13 +3,14 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useState } from "react";
 import { PiGoogleLogoBold } from "react-icons/pi";
 import LabeledSeparator from "@/components/LabeledSeparator";
-import { useAsyncRequest } from "@/hooks/useAsyncRequest";
+import { useMutation } from "@tanstack/react-query";
 import { registerWithEmail } from "@/services/authService";
 import { useNavigate } from "react-router";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { run: register, isLoading: registerIsLoading } = useAsyncRequest(registerWithEmail, {
+  const { mutate, isPending } = useMutation({
+    mutationFn: registerWithEmail,
     onSuccess: () => {
       navigate("/");
     },
@@ -38,7 +39,7 @@ export default function RegisterPage() {
           placeholder="Enter your password"
         />
       </Field.Root>
-      <Button onClick={() => register(email, password)} loading={registerIsLoading}>
+      <Button onClick={() => mutate({ email, password })} loading={isPending}>
         Sign up
       </Button>
       <LabeledSeparator label="or" color="fg.subtle" my="2" />

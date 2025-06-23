@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Center, HStack, Loader } from "@chakra-ui/react";
-import Workspace from "@/features/editor/Workspace";
+import Preview from "@/features/editor/Preview";
 import Editor from "@/features/editor/Editor";
+import { useBlockActions, useBlocks } from "@/stores/blockStore";
 
 // For testing
 const DB_BLOCKS = [
@@ -19,7 +20,8 @@ const DB_BLOCKS = [
 ];
 
 export default function EditorPage() {
-  const [blockData, setBlockData] = useState(null);
+  const blocks = useBlocks();
+  const { setBlocks } = useBlockActions();
   const [selectedBlockId, setSelectedBlockId] = useState(null);
 
   // Simulate fetching blocks from a database
@@ -28,11 +30,11 @@ export default function EditorPage() {
       const fetchedBlockData = await new Promise((resolve) => {
         setTimeout(() => resolve(DB_BLOCKS), 1);
       });
-      setBlockData(fetchedBlockData);
+      setBlocks(fetchedBlockData);
     })();
   }, []);
 
-  if (!blockData) {
+  if (!blocks) {
     return (
       <Center h="100vh">
         <Loader />
@@ -42,15 +44,8 @@ export default function EditorPage() {
 
   return (
     <HStack h="100vh" spacing={0}>
-      <Workspace
-        blockData={blockData}
-        setBlockData={setBlockData}
-        setSelectedBlockId={setSelectedBlockId}
-      />
-      <Editor
-        blockData={blockData.find((block) => block.id === selectedBlockId)}
-        setBlockData={setBlockData}
-      />
+      <Preview setSelectedBlockId={setSelectedBlockId} />
+      <Editor selectedBlockId={selectedBlockId} />
     </HStack>
   );
 }

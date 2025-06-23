@@ -1,7 +1,7 @@
 import { Avatar, Box, HStack, Spacer, VStack, Heading, Button } from "@chakra-ui/react";
 import { PiNewspaper, PiCards, PiGear } from "react-icons/pi";
 import { Outlet } from "react-router";
-import Sidebar from "../Sidebar";
+import Sidebar from "@/components/Sidebar";
 
 const DASHBOARD_LINKS = [
   { label: "Latest News", path: "/news", icon: <PiNewspaper /> },

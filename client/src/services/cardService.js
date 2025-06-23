@@ -1,7 +1,7 @@
 import authFetch from "@/utils/authFetch";
 
-export async function fetchCards(options = {}) {
-  const response = await authFetch("/api/cards", options);
+export async function fetchCards() {
+  const response = await authFetch("/api/cards");
 
   if (!response.ok) {
     throw new Error("Failed to fetch cards");
@@ -11,7 +11,7 @@ export async function fetchCards(options = {}) {
   return json.cards;
 }
 
-export async function createCard(title, slug, options = {}) {
+export async function createCard({ title, slug }) {
   const response = await authFetch("/api/cards", {
     method: "POST",
     headers: {
@@ -21,7 +21,6 @@ export async function createCard(title, slug, options = {}) {
       title,
       slug,
     }),
-    ...options,
   });
 
   if (!response.ok) {
