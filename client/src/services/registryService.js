@@ -9,10 +9,10 @@ for (const path in blockModules) {
   const module = blockModules[path];
   const meta = module.meta;
 
-  if (!meta?.blockType)
-    throw new Error(`Block module at ${path} does not export a 'blockType' meta property.`);
+  if (!meta?.type)
+    throw new Error(`Block module at ${path} does not export a 'type' meta property.`);
 
-  blockRegistry[meta.blockType] = {
+  blockRegistry[meta.type] = {
     Component: module.default,
     meta,
   };

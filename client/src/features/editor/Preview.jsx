@@ -49,19 +49,19 @@ export default function Preview({ setSelectedBlockId }) {
             items={blocks.map((block) => block.id)}
             strategy={verticalListSortingStrategy}
           >
-            {blocks.map((blockData) => {
-              const Component = blockRegistry[blockData.blockType].Component;
-              const { defaultConfig } = blockRegistry[blockData.blockType].meta;
-              const config = deepMerge(defaultConfig, blockData.config);
+            {blocks.map(({ id, type, config }) => {
+              const Component = blockRegistry[type].Component;
+              const { defaultConfig } = blockRegistry[type].meta;
+              const mergedConfig = deepMerge(defaultConfig, config);
 
               return (
                 <BlockWrapper
-                  id={blockData.id}
-                  key={blockData.id}
+                  id={id}
+                  key={id}
                   draggedBlockId={draggedBlockId}
                   setSelectedBlockId={setSelectedBlockId}
                 >
-                  <Component config={config} />
+                  <Component config={mergedConfig} />
                 </BlockWrapper>
               );
             })}
@@ -72,7 +72,7 @@ export default function Preview({ setSelectedBlockId }) {
         {draggedBlockId &&
           (() => {
             const draggedBlock = blocks.find((block) => block.id === draggedBlockId);
-            const icon = blockRegistry[draggedBlock.blockType].meta.icon;
+            const icon = blockRegistry[draggedBlock.type].meta.icon;
             return (
               <Box h="fit-content" w="fit-content">
                 {icon}

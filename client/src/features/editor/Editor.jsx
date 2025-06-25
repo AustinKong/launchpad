@@ -4,36 +4,35 @@ import { deepMerge } from "@/utils/objectUtils";
 import { useBlocks } from "@/hooks/useBlocks";
 
 export default function Editor({ selectedBlockId, setSelectedBlockId }) {
-  const { blocks, createBlock, editBlock, deleteBlock } = useBlocks();
+  const { blocks, createBlock, editBlock, deleteBlock, saveBlocks, saveIsLoading } = useBlocks();
 
   if (!selectedBlockId) {
     return (
-      <VStack w="30%" bgColor="bg.panel" h="full" p="4">
-        {Object.entries(blockRegistry).map(([blockType, block]) => (
+      <VStack w="30%" bgColor="bg.panel" h="full" p="4" alignItems="stretch">
+        {Object.entries(blockRegistry).map(([type, block]) => (
           <Button
-            key={blockType}
+            key={type}
             onClick={() =>
               createBlock({
-                blockType,
+                type,
                 config: block.meta.defaultConfig,
               })
             }
           >
-            Create {blockType}
+            Create {type}
           </Button>
         ))}
+        <Button onClick={saveBlocks} disabled={saveIsLoading} loading={saveIsLoading}>
+          Save
+        </Button>
       </VStack>
     );
   }
 
-  const {
-    id,
-    blockType,
-    config: blockConfig,
-  } = blocks.find((block) => block.id === selectedBlockId);
-  const { fields, defaultConfig } = blockRegistry[blockType].meta;
+  const { id, type, config } = blocks.find((block) => block.id === selectedBlockId);
+  const { fields, defaultConfig } = blockRegistry[type].meta;
   // In case any part of config is missing in database, we merge it with defaultConfig
-  const config = deepMerge(defaultConfig, blockConfig);
+  const mergedConfig = deepMerge(defaultConfig, config);
   const groupedFields = fields.reduce((acc, { group, ...field }) => {
     if (!acc[group]) acc[group] = [];
     acc[group].push(field);
@@ -42,7 +41,7 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
 
   return (
     <VStack w="30%" bgColor="bg.panel" h="full" p="4">
-      <Heading>Editing {blockType.charAt(0).toUpperCase() + blockType.slice(1)}</Heading>
+      <Heading>Editing {type.charAt(0).toUpperCase() + type.slice(1)}</Heading>
       <VStack gap="2" w="full" alignItems="stretch">
         {Object.entries(groupedFields).map(([groupName, fields]) => {
           return (
@@ -59,7 +58,7 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
                     return (
                       <FieldComponent
                         key={field.key}
-                        value={config[field.key]}
+                        value={mergedConfig[field.key]}
                         onChange={(value) =>
                           editBlock(selectedBlockId, { config: { [field.key]: value } })
                         }
@@ -79,7 +78,10 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
             deleteBlock(id);
           }}
         >
-          Delete {blockType}
+          Delete {type}
+        </Button>
+        <Button onClick={saveBlocks} disabled={saveIsLoading} loading={saveIsLoading}>
+          Save
         </Button>
       </VStack>
     </VStack>

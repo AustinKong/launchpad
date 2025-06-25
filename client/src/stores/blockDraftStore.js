@@ -38,10 +38,9 @@ const useBlockDraftStore = create((set) => ({
         };
       });
     },
-    resetBlocks: (blockOrders) => {
+    resetBlockEdits: () => {
       set({
         blockEdits: {},
-        blockOrders: blockOrders,
       });
     },
   },
@@ -56,6 +55,11 @@ const useBlockDraftStore = create((set) => ({
         return {
           blockOrders: arrayMove(blockOrders, oldIndex, newIndex),
         };
+      });
+    },
+    resetBlockOrders: (blockOrders) => {
+      set({
+        blockOrders: blockOrders,
       });
     },
   },

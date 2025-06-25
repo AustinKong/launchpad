@@ -6,12 +6,14 @@ import {
   batchUpdateCardBlockSchema,
   createCardSchema,
   getCardByIdSchema,
+  getCardBySlugSchema,
 } from "#schemas/cards.js";
 import {
   getCardsByUserId,
   getCardById,
   createCard,
   batchUpdateCardBlocks,
+  getCardBySlug,
 } from "#services/cardService.js";
 
 const router = express.Router();
@@ -33,6 +35,17 @@ router.get(
   asyncHandler(async function (req, res) {
     const { cardId } = req.params;
     const card = await getCardById(cardId);
+
+    res.status(200).json({ card });
+  })
+);
+
+router.get(
+  "/slug/:slug",
+  validateRequest(getCardBySlugSchema),
+  asyncHandler(async function (req, res) {
+    const { slug } = req.params;
+    const card = await getCardBySlug(slug);
 
     res.status(200).json({ card });
   })

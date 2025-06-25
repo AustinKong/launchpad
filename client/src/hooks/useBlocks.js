@@ -6,34 +6,31 @@ import {
   useBlockOrders,
 } from "@/stores/blockDraftStore";
 import { fetchBlocks } from "@/services/blockService";
-import { fetchCardById, fetchCards, saveCardBlocks } from "@/services/cardService";
-import { useEffect, useMemo, useState } from "react";
+import { fetchCards, saveCardBlocks } from "@/services/cardService";
+import { useEffect, useMemo, useRef } from "react";
 import { deepMerge } from "@/utils/objectUtils";
 import { useParams } from "react-router";
 
 export function useBlocks() {
   const { slug } = useParams();
+  const prevCardIdRef = useRef(null);
   const queryClient = useQueryClient();
   const blockEdits = useBlockEdits();
   const blockOrders = useBlockOrders();
-  const { editBlock, deleteBlock, createBlock, resetBlocks } = useBlockEditActions();
-  const { reorderBlocks } = useBlockOrderActions();
+  const { editBlock, deleteBlock, createBlock, resetBlockEdits } = useBlockEditActions();
+  const { reorderBlocks, resetBlockOrders } = useBlockOrderActions();
 
   const {
-    data: cardId,
-    isLoading: cardIdIsLoading,
-    isError: cardIdIsError,
+    data: card,
+    isLoading: cardIsLoading,
+    isError: cardIsError,
   } = useQuery({
     queryKey: ["cards"],
     queryFn: () => fetchCards(),
-    select: (cards) => {
-      const cardId = cards.find((card) => card.slug === slug)?.id;
-      if (!cardId) {
-        throw new Error("Card doesn't exist for this user");
-      }
-      return cardId;
-    },
+    select: (cards) => cards.find((card) => card.slug === slug),
   });
+
+  const { id: cardId, blockOrders: initialBlockOrders } = card || {};
 
   const {
     data: blocks,
@@ -46,22 +43,8 @@ export function useBlocks() {
   });
 
   const {
-    data: card,
-    isLoading: cardIsLoading,
-    isError: cardIsError,
-  } = useQuery({
-    queryKey: ["card", cardId],
-    queryFn: () => fetchCardById(cardId),
-    enabled: !!cardId,
-    initialData: () => {
-      const allCards = queryClient.getQueryData(["cards"]);
-      return allCards?.find((card) => card.id === cardId);
-    },
-  });
-
-  const {
     mutate: saveBlocks,
-    isLoading: isSaving,
+    isLoading: saveIsLoading,
     isError: saveIsError,
   } = useMutation({
     mutationFn: () =>
@@ -70,63 +53,46 @@ export function useBlocks() {
         blockOrders,
         blockEdits,
       }),
-    onMutate: async ({ card, blocks }) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["blocks", cardId] });
-      await queryClient.cancelQueries({ queryKey: ["card", cardId] });
+    onSuccess: ({ card: updatedCard, blocks: updatedBlocks }) => {
+      // Do not invalidate cache here
+      queryClient.setQueryData(["cards"], (oldCards) =>
+        oldCards.map((card) => (card.id === updatedCard.id ? updatedCard : card)),
+      );
+      queryClient.setQueryData(["blocks", cardId], updatedBlocks);
 
-      const previousBlocks = queryClient.getQueryData(["blocks", cardId]);
-      const previousCard = queryClient.getQueryData(["card", cardId]);
-
-      queryClient.setQueryData(["blocks", cardId], blocks);
-      queryClient.setQueryData(["card", cardId], card);
-      resetBlocks(card.blockOrders);
-
-      return { previousBlocks, previousCard };
-    },
-    onError: (err, _, { previousBlocks, previousCard }) => {
-      queryClient.setQueryData(["blocks", cardId], previousBlocks);
-      queryClient.setQueryData(["card", cardId], previousCard);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["blocks", cardId] });
-      queryClient.invalidateQueries({ queryKey: ["card", cardId] });
+      resetBlockEdits();
+      resetBlockOrders(updatedCard.blockOrders);
     },
   });
 
-  const isLoading = blocksIsLoading || cardIsLoading || isSaving;
-  const isError = blocksIsError || cardIsError || saveIsError;
+  useEffect(() => {
+    if (cardId && cardId !== prevCardIdRef.current && blocks) {
+      resetBlockEdits();
+      resetBlockOrders(initialBlockOrders);
+      prevCardIdRef.current = cardId;
+    }
+  }, [cardId, blocks]);
+
+  const isLoading = blocksIsLoading || cardIsLoading;
+  const isError = blocksIsError || cardIsError;
 
   const mergedBlocks = useMemo(
     () =>
       blockOrders?.map((blockId) => {
-        const blockEdit = blockEdits[blockId];
-        return deepMerge(blocks[blockId], blockEdit);
+        const block = blocks.find((b) => b.id === blockId);
+        const blockEdit = blockEdits[blockId] || {};
+        return deepMerge(block, blockEdit);
       }),
     [blocks, blockOrders, blockEdits],
   );
-
-  /*
-    Logic:
-    1. After getting blockOrder from server, immediately update client state (if there is no)
-        Then, discard blockOrder and never use block order from server again. Thereafter, only
-        refer to client state's blockOrder
-    2. Based on client state blockOrder, map each id to the corresponding block object (from 
-        server state). Then apply changes by directly overwriting keys specified in blockEdits
-        using deepMerge
-    3. Return only an array of block objects. The order is encoded in the order of the array
-
-    Expose also:
-    1. A function to modify block order
-    2. A function to edit a block's config
-    3. A function to delete a block
-    4. A function to create a block
-  */
 
   return {
     blocks: mergedBlocks || [],
     isLoading,
     isError,
+    saveIsLoading,
+    saveIsError,
+
     editBlock,
     deleteBlock,
     createBlock,

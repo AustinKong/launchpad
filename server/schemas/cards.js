@@ -6,6 +6,12 @@ export const getCardByIdSchema = {
   }),
 };
 
+export const getCardBySlugSchema = {
+  params: z.object({
+    slug: z.string().min(1, "Card slug is required"),
+  }),
+};
+
 export const createCardSchema = {
   body: z.object({
     title: z.string().min(1, "Card name is required"),
@@ -28,7 +34,7 @@ export const batchUpdateCardBlockSchema = {
       z.string().uuid("Invalid block ID format"),
       z
         .object({
-          config: z.object().passthrough("Block config must be an object"),
+          config: z.object({}).passthrough(),
         })
         .passthrough()
     ),

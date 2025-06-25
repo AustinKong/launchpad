@@ -28,6 +28,18 @@ export async function getCardById(cardId) {
   return card;
 }
 
+export async function getCardBySlug(slug) {
+  const card = await prisma.card.findUnique({
+    where: { slug },
+  });
+
+  if (!card) {
+    throw new ApiError(404, "Card not found");
+  }
+
+  return card;
+}
+
 export async function createCard({ userId, title, slug }) {
   try {
     const card = await prisma.card.create({
@@ -64,8 +76,8 @@ export async function batchUpdateCardBlocks({
 
   const createdBlockIds = getAddedElements(originalBlockOrders, blockOrders);
   const removedBlockIds = getRemovedElements(originalBlockOrders, blockOrders);
-  const updatedBlockIds = blockOrders.filter(
-    (id) => !createdBlockIds.includes(id) && !removedBlockIds.includes(id)
+  const updatedBlockIds = Object.keys(blockEdits).filter(
+    (id) => originalBlockOrders.includes(id) && !removedBlockIds.includes(id)
   );
 
   // Initiates a transaction. First creates new blocks, then deletes removed blocks,

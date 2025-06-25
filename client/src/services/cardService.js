@@ -22,6 +22,17 @@ export async function fetchCardById(id) {
   return json.card;
 }
 
+export async function fetchCardBySlug(slug) {
+  const response = await authFetch(`/api/cards/slug/${slug}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch card by slug");
+  }
+
+  const json = await response.json();
+  return json.card;
+}
+
 export async function createCard({ title, slug }) {
   const response = await authFetch("/api/cards", {
     method: "POST",
