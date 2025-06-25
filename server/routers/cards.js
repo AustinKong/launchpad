@@ -2,11 +2,16 @@ import express from "express";
 import asyncHandler from "#utils/asyncHandler.js";
 import validateRequest from "#middleware/validateRequest.js";
 import authenticate from "#middleware/authenticate.js";
-import { createCardSchema, getCardByIdSchema } from "#schemas/cards.js";
+import {
+  batchUpdateCardBlockSchema,
+  createCardSchema,
+  getCardByIdSchema,
+} from "#schemas/cards.js";
 import {
   getCardsByUserId,
   getCardById,
   createCard,
+  batchUpdateCardBlocks,
 } from "#services/cardService.js";
 
 const router = express.Router();
@@ -41,9 +46,35 @@ router.post(
     const userId = req.user.sub;
     const { title, slug } = req.body;
 
-    const newCard = await createCard(userId, title, slug);
+    const card = await createCard({ userId, title, slug });
 
-    res.status(201).json({ card: newCard });
+    res.status(201).json({ card });
+  })
+);
+
+router.patch(
+  "/:cardId/batch",
+  authenticate,
+  validateRequest(batchUpdateCardBlockSchema),
+  asyncHandler(async function (req, res) {
+    const { cardId } = req.params;
+    const { blockEdits, blockOrders } = req.body;
+
+    const { card, blocks } = await batchUpdateCardBlocks({
+      cardId,
+      blockEdits,
+      blockOrders,
+    });
+
+    res.status(200).json({ card, blocks });
+  })
+);
+
+// TODO: Implement update card functionality
+router.put(
+  "/:cardId",
+  asyncHandler(async function (req, res) {
+    res.sendStatus(501);
   })
 );
 

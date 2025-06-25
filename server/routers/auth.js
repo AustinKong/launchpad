@@ -15,10 +15,10 @@ router.post(
   validateRequest(registerSchema),
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { accessToken, refreshToken } = await registerWithEmail(
+    const { accessToken, refreshToken } = await registerWithEmail({
       email,
-      password
-    );
+      password,
+    });
 
     setAuthCookies(res, { accessToken, refreshToken });
     res.sendStatus(201);
@@ -30,7 +30,7 @@ router.post(
   validateRequest(loginSchema),
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { accessToken, refreshToken } = await login(email, password);
+    const { accessToken, refreshToken } = await login({ email, password });
 
     setAuthCookies(res, { accessToken, refreshToken });
     res.sendStatus(200);
@@ -41,7 +41,9 @@ router.post(
   "/refresh",
   asyncHandler(async function (req, res) {
     const oldRefreshToken = req.cookies?.refreshToken;
-    const { accessToken, refreshToken } = await refreshTokens(oldRefreshToken);
+    const { accessToken, refreshToken } = await refreshTokens({
+      oldRefreshToken,
+    });
 
     setAuthCookies(res, { accessToken, refreshToken });
     res.sendStatus(200);

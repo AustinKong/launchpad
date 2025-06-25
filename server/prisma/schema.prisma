@@ -27,10 +27,11 @@ model User {
 }
 
 model Card {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  title     String
-  slug      String   @unique
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String
+  slug        String   @unique
+  blockOrders String[] @default([])
 
   userId String
   user   User    @relation(fields: [userId], references: [id])
@@ -50,7 +51,6 @@ model Block {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   type      String
-  order     Int
   config    Json
 
   cardId String

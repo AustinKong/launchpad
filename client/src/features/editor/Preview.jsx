@@ -6,11 +6,10 @@ import { deepMerge } from "@/utils/objectUtils";
 import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { useState } from "react";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useBlockActions, useBlocks } from "@/stores/blockStore";
+import { useBlocks } from "@/hooks/useBlocks";
 
 export default function Preview({ setSelectedBlockId }) {
-  const blocks = useBlocks();
-  const { reorderBlocks } = useBlockActions();
+  const { blocks, reorderBlocks } = useBlocks();
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
 

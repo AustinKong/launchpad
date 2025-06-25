@@ -1,6 +1,7 @@
 const blockModules = import.meta.glob("../features/blocks/*/index.jsx", { eager: true });
 const fieldModules = import.meta.glob("../features/fields/*/index.jsx", { eager: true });
 
+// TODO: Export a readonly function. Instead of risking clients editing this
 export const blockRegistry = {};
 export const fieldRegistry = {};
 

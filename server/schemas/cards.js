@@ -6,7 +6,7 @@ export const getCardByIdSchema = {
   }),
 };
 
-export const createCardSchema = z.object({
+export const createCardSchema = {
   body: z.object({
     title: z.string().min(1, "Card name is required"),
     slug: z
@@ -17,4 +17,21 @@ export const createCardSchema = z.object({
           "Card URL must be lowercase and can only contain letters, numbers, and hyphens",
       }),
   }),
-});
+};
+
+export const batchUpdateCardBlockSchema = {
+  params: z.object({
+    cardId: z.string().uuid("Invalid card ID format"),
+  }),
+  body: z.object({
+    blockEdits: z.record(
+      z.string().uuid("Invalid block ID format"),
+      z
+        .object({
+          config: z.object().passthrough("Block config must be an object"),
+        })
+        .passthrough()
+    ),
+    blockOrders: z.array(z.string().uuid("Invalid block ID format")),
+  }),
+};

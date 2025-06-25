@@ -42,7 +42,6 @@ export default function CardsPage() {
         isOpen={createCardModalIsOpen}
         onClose={() => {
           closeCreateCardModal();
-          run();
         }}
       />
       {!Array.isArray(cards) || cards.length === 0 ? (
