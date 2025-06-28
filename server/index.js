@@ -1,18 +1,24 @@
 import dotenv from "dotenv";
 import express, { json } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
 
 import authRouter from "#routers/auth.js";
+import cardsRouter from "#routers/cards.js";
+import blocksRouter from "#routers/blocks.js";
 import errorHandler from "#middleware/errorHandler.js";
 import logger from "#middleware/logger.js";
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(json());
+app.use(cookieParser());
 app.use(logger);
 
 app.use("/auth", authRouter);
+app.use("/cards", cardsRouter);
+app.use("/cards/:cardId/blocks", blocksRouter);
 
 app.use(errorHandler);
 

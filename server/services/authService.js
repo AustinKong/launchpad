@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import prisma from "#prisma/prismaClient.js";
 import ApiError from "#utils/ApiError.js";
-import { signAccess, signRefresh } from "#utils/jwt.js";
+import { signAccess, signRefresh, verifyRefresh } from "#utils/jwt.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export async function login(email, password) {
+export async function login({ email, password }) {
   const user = await prisma.user.findUnique({
     where: { email },
   });
@@ -17,23 +18,16 @@ export async function login(email, password) {
   }
 
   const payload = {
-    id: user.id,
-    email: user.email,
+    sub: user.id,
   };
 
   return {
-    user: {
-      id: user.id,
-      email: user.email,
-    },
-    tokens: {
-      accessToken: signAccess(payload),
-      refreshToken: signRefresh(payload),
-    },
+    accessToken: signAccess(payload),
+    refreshToken: signRefresh(payload),
   };
 }
 
-export async function registerWithEmail(email, password) {
+export async function registerWithEmail({ email, password }) {
   const hash = await bcrypt.hash(password, 10);
   try {
     const user = await prisma.user.create({
@@ -46,29 +40,38 @@ export async function registerWithEmail(email, password) {
     });
 
     const payload = {
-      id: user.id,
-      email: user.email,
+      sub: user.id,
     };
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-      tokens: {
-        accessToken: signAccess(payload),
-        refreshToken: signRefresh(payload),
-      },
+      accessToken: signAccess(payload),
+      refreshToken: signRefresh(payload),
     };
   } catch (err) {
-    if (err.code === "P2002") {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
       throw new ApiError(400, "User already exists with this email");
     }
     throw new ApiError(500, "Internal server error", err.message);
   }
 }
 
-export async function registerWithGoogle(email, providerAccountId) {
+export async function refreshTokens({ oldRefreshToken }) {
+  if (!oldRefreshToken) {
+    throw new ApiError(401, "No refresh token provided");
+  }
+
+  const oldPaylod = verifyRefresh(oldRefreshToken);
+  const payload = {
+    sub: oldPaylod.sub,
+  };
+
+  return {
+    accessToken: signAccess(payload),
+    refreshToken: signRefresh(payload),
+  };
+}
+
+export async function registerWithGoogle({ email, providerAccountId }) {
   // Stub
   throw new ApiError(501, "Google registration not implemented yet");
 }

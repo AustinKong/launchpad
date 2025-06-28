@@ -2,7 +2,7 @@ import { createMapper } from "@/utils/mappers";
 import { Text } from "@chakra-ui/react";
 
 export const meta = {
-  blockType: "paragraph",
+  type: "paragraph",
   defaultConfig: {
     text: "Lorem ipsum dolor sit amet.",
     textStyle: { fontSize: "md", fontWeight: "normal" },

@@ -1,61 +1,48 @@
 import express from "express";
 import asyncHandler from "#utils/asyncHandler.js";
-import requestValidator from "#middleware/requestValidator.js";
-import { login, registerWithEmail } from "#services/authService.js";
-import { z } from "zod";
-import { signAccess, signRefresh } from "#utils/jwt.js";
+import validateRequest from "#middleware/validateRequest.js";
+import { registerSchema, loginSchema } from "#schemas/auth.js";
+import {
+  login,
+  registerWithEmail,
+  refreshTokens,
+} from "#services/authService.js";
 
 const router = express.Router();
 
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
 router.post(
   "/register",
-  requestValidator(registerSchema),
+  validateRequest(registerSchema),
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { user, tokens } = await registerWithEmail(email, password);
-    const { accessToken, refreshToken } = tokens;
+    const { accessToken, refreshToken } = await registerWithEmail({
+      email,
+      password,
+    });
 
     setAuthCookies(res, { accessToken, refreshToken });
-    res.status(201).json({ user });
+    res.sendStatus(201);
   })
 );
 
 router.post(
   "/login",
-  requestValidator(loginSchema),
+  validateRequest(loginSchema),
   asyncHandler(async function (req, res) {
     const { email, password } = req.body;
-    const { user, tokens } = await login(email, password);
-    const { accessToken, refreshToken } = tokens;
+    const { accessToken, refreshToken } = await login({ email, password });
 
     setAuthCookies(res, { accessToken, refreshToken });
-    res.status(200).json({ user });
+    res.sendStatus(200);
   })
 );
 
 router.post(
   "/refresh",
   asyncHandler(async function (req, res) {
-    const oldRefreshToken = req.cookies.refreshToken;
-    if (!oldRefreshToken) {
-      throw new ApiError(401, "Refresh token missing");
-    }
-
-    const payload = verifyRefresh(oldRefreshToken);
-    const accessToken = signAccess({ id: payload.id, email: payload.email });
-    const refreshToken = signRefresh({
-      id: payload.id,
-      email: payload.email,
+    const oldRefreshToken = req.cookies?.refreshToken;
+    const { accessToken, refreshToken } = await refreshTokens({
+      oldRefreshToken,
     });
 
     setAuthCookies(res, { accessToken, refreshToken });
@@ -84,7 +71,7 @@ function setAuthCookies(res, { accessToken, refreshToken }) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
-    path: "/refresh",
+    path: "/", // FIXME: Cookie will not be supplied if set to "/auth/refresh", not sure if this has to do with vite's api/ proxy
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }

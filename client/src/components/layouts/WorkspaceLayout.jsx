@@ -1,0 +1,36 @@
+import { PiCards, PiEye, PiPicnicTable, PiShare } from "react-icons/pi";
+import { Avatar, Box, HStack, Spacer, VStack, Heading, IconButton } from "@chakra-ui/react";
+import { Outlet } from "react-router";
+import Sidebar from "@/components/Sidebar";
+
+const EDITOR_LINKS = [
+  { label: "Editor", path: "/edit", icon: <PiCards /> },
+  { label: "Theme", path: "/theme", icon: <PiPicnicTable /> },
+];
+
+export default function WorkspaceLayout() {
+  return (
+    <HStack w="100vw" h="100vh">
+      <Sidebar links={EDITOR_LINKS} />
+      <VStack w="full" h="full" bg="bg.main" p="0">
+        <HStack as="nav" w="full" p="4">
+          <Heading size="xl">Card Title Here</Heading>
+          <Spacer />
+          <IconButton size="sm" variant="plain">
+            <PiEye />
+          </IconButton>
+          <IconButton size="sm" variant="plain">
+            <PiShare />
+          </IconButton>
+          <Avatar.Root size="sm">
+            <Avatar.Fallback name="User Avatar" />
+            <Avatar.Image src="https://bit.ly/sage-adebayo" alt="User Avatar" />
+          </Avatar.Root>
+        </HStack>
+        <Box as="main" w="full" flex="1" overflowY="auto">
+          <Outlet />
+        </Box>
+      </VStack>
+    </HStack>
+  );
+}

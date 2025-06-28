@@ -3,13 +3,14 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useState } from "react";
 import { PiGoogleLogoBold } from "react-icons/pi";
 import LabeledSeparator from "@/components/LabeledSeparator";
-import { useAsyncRequest } from "@/hooks/useAsyncRequest";
 import { login } from "@/services/authService";
 import { useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { run: loginWithEmail, isLoading: loginIsLoading } = useAsyncRequest(login, {
+  const { mutate, isPending } = useMutation({
+    mutationFn: login,
     onSuccess: () => {
       navigate("/");
     },
@@ -38,7 +39,7 @@ export default function LoginPage() {
           placeholder="Enter your password"
         />
       </Field.Root>
-      <Button onClick={() => loginWithEmail(email, password)} loading={loginIsLoading}>
+      <Button onClick={() => mutate({ email, password })} loading={isPending}>
         Login
       </Button>
       <LabeledSeparator label="or" color="fg.subtle" my="2" />

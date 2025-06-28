@@ -16,6 +16,7 @@ async function tryRefresh() {
         refreshPromise = null;
       });
   }
+  return refreshPromise;
 }
 
 /**
@@ -27,7 +28,7 @@ async function tryRefresh() {
  * @returns {Promise<Response>} The final response object from the original or retried request.
  * @throws {Error} If both the original request and refresh attempt fail with 401.
  */
-export async function authFetch(url, options = {}) {
+async function authFetch(url, options = {}) {
   const response = await fetch(url, {
     ...options,
     credentials: "include",
@@ -47,3 +48,5 @@ export async function authFetch(url, options = {}) {
     throw new Error("Unauthorized");
   }
 }
+
+export default authFetch;

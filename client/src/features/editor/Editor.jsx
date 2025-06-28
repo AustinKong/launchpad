@@ -1,24 +1,51 @@
-import { Collapsible, Heading, VStack, Text } from "@chakra-ui/react";
+import { Collapsible, Heading, VStack, Text, Button } from "@chakra-ui/react";
 import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { deepMerge } from "@/utils/objectUtils";
+import { useBlocks } from "@/hooks/useBlocks";
+import { toaster } from "@/components/ui/toaster";
 
-export default function Editor({ blockData, setBlockData }) {
-  if (!blockData) {
-    return <VStack w="30%" bgColor="bg.panel" h="full" p="4"></VStack>;
+export default function Editor({ selectedBlockId, setSelectedBlockId }) {
+  const { blocks, createBlock, editBlock, deleteBlock, saveBlocks, saveIsLoading } = useBlocks();
+
+  function handleSave() {
+    toaster.promise(saveBlocks(), {
+      success: {
+        title: "Blocks saved successfully",
+      },
+      error: {
+        title: "Failed to save blocks",
+      },
+      loading: { title: "Saving blocks..." },
+    });
   }
 
-  const handleConfigChange = (blockId, fieldKey, value) => {
-    setBlockData((prevData) =>
-      prevData.map((block) =>
-        block.id === blockId ? { ...block, config: { ...block.config, [fieldKey]: value } } : block,
-      ),
+  if (!selectedBlockId) {
+    return (
+      <VStack w="30%" bgColor="bg.panel" h="full" p="4" alignItems="stretch">
+        {Object.entries(blockRegistry).map(([type, block]) => (
+          <Button
+            key={type}
+            onClick={() =>
+              createBlock({
+                type,
+                config: block.meta.defaultConfig,
+              })
+            }
+          >
+            Create {type}
+          </Button>
+        ))}
+        <Button onClick={handleSave} disabled={saveIsLoading} loading={saveIsLoading}>
+          Save
+        </Button>
+      </VStack>
     );
-  };
+  }
 
-  const { id, blockType, config: blockConfig } = blockData;
-  const { fields, defaultConfig } = blockRegistry[blockType].meta;
+  const { id, type, config } = blocks.find((block) => block.id === selectedBlockId);
+  const { fields, defaultConfig } = blockRegistry[type].meta;
   // In case any part of config is missing in database, we merge it with defaultConfig
-  const config = deepMerge(defaultConfig, blockConfig);
+  const mergedConfig = deepMerge(defaultConfig, config);
   const groupedFields = fields.reduce((acc, { group, ...field }) => {
     if (!acc[group]) acc[group] = [];
     acc[group].push(field);
@@ -27,8 +54,8 @@ export default function Editor({ blockData, setBlockData }) {
 
   return (
     <VStack w="30%" bgColor="bg.panel" h="full" p="4">
-      <Heading>Editing {blockType.charAt(0).toUpperCase() + blockType.slice(1)}</Heading>
-      <VStack gap="2" w="full">
+      <Heading>Editing {type.charAt(0).toUpperCase() + type.slice(1)}</Heading>
+      <VStack gap="2" w="full" alignItems="stretch">
         {Object.entries(groupedFields).map(([groupName, fields]) => {
           return (
             <Collapsible.Root key={groupName} defaultOpen w="full">
@@ -44,8 +71,10 @@ export default function Editor({ blockData, setBlockData }) {
                     return (
                       <FieldComponent
                         key={field.key}
-                        value={config[field.key]}
-                        onChange={(value) => handleConfigChange(id, field.key, value)}
+                        value={mergedConfig[field.key]}
+                        onChange={(value) =>
+                          editBlock(selectedBlockId, { config: { [field.key]: value } })
+                        }
                         label={field.label}
                         description={field.description}
                       />
@@ -56,6 +85,17 @@ export default function Editor({ blockData, setBlockData }) {
             </Collapsible.Root>
           );
         })}
+        <Button
+          onClick={() => {
+            setSelectedBlockId(null);
+            deleteBlock(id);
+          }}
+        >
+          Delete {type}
+        </Button>
+        <Button onClick={handleSave} disabled={saveIsLoading} loading={saveIsLoading}>
+          Save
+        </Button>
       </VStack>
     </VStack>
   );

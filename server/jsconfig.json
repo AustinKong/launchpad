@@ -6,7 +6,8 @@
       "#middleware/*": ["./middleware/*"],
       "#utils/*": ["./utils/*"],
       "#services/*": ["./services/*"],
-      "#prisma/*": ["./prisma/*"]
+      "#prisma/*": ["./prisma/*"],
+      "#schemas/*": ["./schemas/*"]
     }
   },
   "include": ["./**/*.js"]
