@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Center, HStack, Loader } from "@chakra-ui/react";
 import Preview from "@/features/editor/Preview";
 import Editor from "@/features/editor/Editor";
