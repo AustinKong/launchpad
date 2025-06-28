@@ -17,7 +17,7 @@ export async function getCardsByUserId(userId) {
 }
 
 export async function getCardById(cardId) {
-  const card = prisma.card.findUnique({
+  const card = await prisma.card.findUnique({
     where: { id: cardId },
   });
 
