@@ -11,7 +11,7 @@ router.get(
   "/",
   validateRequest(getBlocksByCardIdSchema),
   asyncHandler(async function (req, res) {
-    const { cardId } = req.query;
+    const { cardId } = req.params;
     const blocks = await getBlocksByCardId(cardId);
 
     res.status(200).json({ blocks });
