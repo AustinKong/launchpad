@@ -2,9 +2,22 @@ import { Collapsible, Heading, VStack, Text, Button } from "@chakra-ui/react";
 import { blockRegistry, fieldRegistry } from "@/services/registryService";
 import { deepMerge } from "@/utils/objectUtils";
 import { useBlocks } from "@/hooks/useBlocks";
+import { toaster } from "@/components/ui/toaster";
 
 export default function Editor({ selectedBlockId, setSelectedBlockId }) {
   const { blocks, createBlock, editBlock, deleteBlock, saveBlocks, saveIsLoading } = useBlocks();
+
+  function handleSave() {
+    toaster.promise(saveBlocks(), {
+      success: {
+        title: "Blocks saved successfully",
+      },
+      error: {
+        title: "Failed to save blocks",
+      },
+      loading: { title: "Saving blocks..." },
+    });
+  }
 
   if (!selectedBlockId) {
     return (
@@ -22,7 +35,7 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
             Create {type}
           </Button>
         ))}
-        <Button onClick={saveBlocks} disabled={saveIsLoading} loading={saveIsLoading}>
+        <Button onClick={handleSave} disabled={saveIsLoading} loading={saveIsLoading}>
           Save
         </Button>
       </VStack>
@@ -80,7 +93,7 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
         >
           Delete {type}
         </Button>
-        <Button onClick={saveBlocks} disabled={saveIsLoading} loading={saveIsLoading}>
+        <Button onClick={handleSave} disabled={saveIsLoading} loading={saveIsLoading}>
           Save
         </Button>
       </VStack>

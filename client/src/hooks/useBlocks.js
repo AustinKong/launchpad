@@ -43,7 +43,7 @@ export function useBlocks() {
   });
 
   const {
-    mutate: saveBlocks,
+    mutateAsync: saveBlocks,
     isLoading: saveIsLoading,
     isError: saveIsError,
   } = useMutation({
