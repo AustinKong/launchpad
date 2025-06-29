@@ -8,7 +8,10 @@ router.post(
   "/image",
   imageUpload,
   asyncHandler(async (req, res) => {
-    res.status(200).json({ filePath: `/uploads/${req.file.filename}` });
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
+    res.status(200).json({ imageUrl });
   })
 );
 
