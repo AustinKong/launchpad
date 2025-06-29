@@ -6,9 +6,9 @@ import { useBlocks } from "@/hooks/useBlocks";
 
 export default function EditorPage() {
   const [selectedBlockId, setSelectedBlockId] = useState(null);
-  const { blocks } = useBlocks();
+  const { isLoading } = useBlocks();
 
-  if (!blocks) {
+  if (!isLoading) {
     return (
       <Center h="100vh">
         <Loader />

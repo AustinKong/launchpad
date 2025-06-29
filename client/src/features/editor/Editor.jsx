@@ -56,35 +56,31 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
     <VStack w="30%" bgColor="bg.panel" h="full" p="4">
       <Heading>Editing {type.charAt(0).toUpperCase() + type.slice(1)}</Heading>
       <VStack gap="2" w="full" alignItems="stretch">
-        {Object.entries(groupedFields).map(([groupName, fields]) => {
-          return (
-            <Collapsible.Root key={groupName} defaultOpen w="full">
-              <Collapsible.Trigger>
-                <Text w="full" fontWeight="semibold">
-                  {groupName}
-                </Text>
-              </Collapsible.Trigger>
-              <Collapsible.Content p="2">
-                <VStack gap="2" w="full">
-                  {fields.map((field) => {
-                    const { key, fieldType, ...rest } = field;
-                    const FieldComponent = fieldRegistry[fieldType].Component;
-                    return (
-                      <FieldComponent
-                        key={key}
-                        value={mergedConfig[key]}
-                        onChange={(value) =>
-                          editBlock(selectedBlockId, { config: { [key]: value } })
-                        }
-                        {...rest}
-                      />
-                    );
-                  })}
-                </VStack>
-              </Collapsible.Content>
-            </Collapsible.Root>
-          );
-        })}
+        {Object.entries(groupedFields).map(([groupName, fields]) => (
+          <Collapsible.Root key={groupName} defaultOpen w="full">
+            <Collapsible.Trigger>
+              <Text w="full" fontWeight="semibold">
+                {groupName}
+              </Text>
+            </Collapsible.Trigger>
+            <Collapsible.Content p="2">
+              <VStack gap="2" w="full">
+                {fields.map((field) => {
+                  const { key, fieldType, ...rest } = field;
+                  const FieldComponent = fieldRegistry[fieldType].Component;
+                  return (
+                    <FieldComponent
+                      key={key}
+                      value={mergedConfig[key]}
+                      onChange={(value) => editBlock(selectedBlockId, { config: { [key]: value } })}
+                      {...rest}
+                    />
+                  );
+                })}
+              </VStack>
+            </Collapsible.Content>
+          </Collapsible.Root>
+        ))}
         <Button
           onClick={() => {
             setSelectedBlockId(null);
