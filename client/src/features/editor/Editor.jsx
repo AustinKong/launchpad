@@ -67,16 +67,16 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
               <Collapsible.Content p="2">
                 <VStack gap="2" w="full">
                   {fields.map((field) => {
-                    const FieldComponent = fieldRegistry[field.fieldType].Component;
+                    const { key, fieldType, ...rest } = field;
+                    const FieldComponent = fieldRegistry[fieldType].Component;
                     return (
                       <FieldComponent
-                        key={field.key}
-                        value={mergedConfig[field.key]}
+                        key={key}
+                        value={mergedConfig[key]}
                         onChange={(value) =>
-                          editBlock(selectedBlockId, { config: { [field.key]: value } })
+                          editBlock(selectedBlockId, { config: { [key]: value } })
                         }
-                        label={field.label}
-                        description={field.description}
+                        {...rest}
                       />
                     );
                   })}

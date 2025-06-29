@@ -4,7 +4,7 @@ import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
 import { deepMerge } from "@/utils/objectUtils";
 import { blockRegistry, fieldRegistry } from "@/services/registryService";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBlocks } from "@/hooks/useBlocks";
 
@@ -12,6 +12,28 @@ export default function Preview({ setSelectedBlockId }) {
   const { blocks, reorderBlocks } = useBlocks();
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
+
+  const cardRef = useRef();
+  const containerRef = useRef();
+
+  useEffect(() => {
+    const card = cardRef.current;
+    const container = containerRef.current;
+
+    function handleClickOutside(event) {
+      if (!card || !container) return;
+
+      const clickedInsideCard = card.contains(event.target);
+      const clickedInsideContainer = container.contains(event.target);
+
+      if (!clickedInsideCard && clickedInsideContainer) {
+        setSelectedBlockId(null);
+      }
+    }
+
+    container.addEventListener("mousedown", handleClickOutside);
+    return () => container.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleDragStart = (event) => {
     setDraggedBlockId(event.active.id);
@@ -34,7 +56,7 @@ export default function Preview({ setSelectedBlockId }) {
       onDragEnd={handleDragEnd}
       modifiers={[restrictToWindowEdges]}
     >
-      <Center h="full" w="70%">
+      <Center h="full" w="70%" ref={containerRef}>
         <Box
           w="350px"
           minH="500px"
@@ -44,6 +66,7 @@ export default function Preview({ setSelectedBlockId }) {
           overflow="hidden"
           as="main"
           role="list"
+          ref={cardRef}
         >
           <SortableContext
             items={blocks.map((block) => block.id)}
