@@ -33,7 +33,10 @@ export function deepMerge(defaults, data) {
     if (data.hasOwnProperty(key)) {
       if (Array.isArray(data[key]) && Array.isArray(merged[key])) {
         merged[key] = [...merged[key], ...data[key]];
-      } else if (typeof data[key] === "object" && typeof merged[key] === "object") {
+      } else if (
+        typeof data[key] === "object" &&
+        typeof merged[key] === "object"
+      ) {
         merged[key] = deepMerge(merged[key], data[key]);
       } else {
         merged[key] = data[key];

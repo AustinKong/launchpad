@@ -1,15 +1,17 @@
-import { Box, Center } from "@chakra-ui/react";
+import { Box, Center, ChakraProvider, Theme } from "@chakra-ui/react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
 import { deepMerge } from "@/utils/objectUtils";
-import { blockRegistry, fieldRegistry } from "@/services/registryService";
-import { useEffect, useRef, useState } from "react";
+import { blockRegistry } from "@/services/registryService";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBlocks } from "@/hooks/useBlocks";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Preview({ setSelectedBlockId }) {
   const { blocks, reorderBlocks } = useBlocks();
+  const { theme } = useTheme();
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
 
@@ -56,7 +58,14 @@ export default function Preview({ setSelectedBlockId }) {
       onDragEnd={handleDragEnd}
       modifiers={[restrictToWindowEdges]}
     >
-      <Center h="full" w="70%" ref={containerRef}>
+      <Center
+        h="full"
+        w="70%"
+        ref={containerRef}
+        bgImage={`url(${theme.backgroundImage})`}
+        bgSize="cover"
+        bgPosition="center"
+      >
         <Box
           w="350px"
           minH="500px"

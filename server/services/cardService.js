@@ -7,6 +7,7 @@ import {
   deleteBlock,
   updateBlock,
 } from "#services/blockService.js";
+import { createTheme } from "#services/themeService.js";
 
 export async function getCardsByUserId(userId) {
   const cards = await prisma.card.findMany({
@@ -42,15 +43,31 @@ export async function getCardBySlug(slug) {
 
 export async function createCard({ userId, title, slug }) {
   try {
-    const card = await prisma.card.create({
-      data: {
-        userId,
-        title,
-        slug,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const card = await tx.card.create({
+        data: {
+          userId,
+          title,
+          slug,
+        },
+      });
+
+      await createTheme(
+        {
+          cardId: card.id,
+          config: {
+            headingTypeface: "Roboto",
+            bodyTypeface: "Roboto",
+            backgroundImage: null,
+          },
+        },
+        tx
+      );
+
+      return card;
     });
 
-    return card;
+    return result;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
       throw new ApiError(400, "Card with this URL already exists");
