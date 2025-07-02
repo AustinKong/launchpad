@@ -23,5 +23,5 @@ export function useFontLoader(familiesToLoad = []) {
     });
   }, [familiesToLoad]);
 
-  return fontsIsLoading;
+  return { fontsIsLoading };
 }
