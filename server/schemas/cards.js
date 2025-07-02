@@ -1,14 +1,14 @@
 import { z } from "zod";
 
-export const getCardByIdSchema = {
+export const getCardByIdentifierSchema = {
   params: z.object({
-    cardId: z.string().uuid("Invalid card ID format"),
+    identifier: z.union(
+      [z.string().uuid(), z.string().min(1)],
+      "Card identifier is required"
+    ),
   }),
-};
-
-export const getCardBySlugSchema = {
-  params: z.object({
-    slug: z.string().min(1, "Card slug is required"),
+  query: z.object({
+    type: z.enum(["id", "slug"]).optional(),
   }),
 };
 

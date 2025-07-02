@@ -5,8 +5,7 @@ import authenticate from "#middleware/authenticate.js";
 import {
   batchUpdateCardBlockSchema,
   createCardSchema,
-  getCardByIdSchema,
-  getCardBySlugSchema,
+  getCardByIdentifierSchema,
 } from "#schemas/cards.js";
 import {
   getCardsByUserId,
@@ -30,22 +29,18 @@ router.get(
 );
 
 router.get(
-  "/:cardId",
-  validateRequest(getCardByIdSchema),
+  "/:identifier",
+  validateRequest(getCardByIdentifierSchema),
   asyncHandler(async function (req, res) {
-    const { cardId } = req.params;
-    const card = await getCardById(cardId);
+    const { identifier } = req.params;
+    const type = req.query.type ?? "id";
 
-    res.status(200).json({ card });
-  })
-);
-
-router.get(
-  "/slug/:slug",
-  validateRequest(getCardBySlugSchema),
-  asyncHandler(async function (req, res) {
-    const { slug } = req.params;
-    const card = await getCardBySlug(slug);
+    let card;
+    if (type === "id") {
+      card = await getCardById(identifier);
+    } else {
+      card = await getCardBySlug(identifier);
+    }
 
     res.status(200).json({ card });
   })

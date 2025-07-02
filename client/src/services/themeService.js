@@ -1,7 +1,7 @@
 import authFetch from "@/utils/authFetch";
 
 export async function fetchTheme(cardId) {
-  const response = await authFetch(`/api/cards/${cardId}/theme`);
+  const response = await fetch(`/api/cards/${cardId}/theme`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch theme");
