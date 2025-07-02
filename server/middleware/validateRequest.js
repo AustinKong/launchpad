@@ -50,7 +50,18 @@ function validateRequest({ body, params, query, cookies }) {
           const details = flattenZodErrors(result.error.format());
           return next(new ApiError(400, "Query validation failed", details));
         }
-        req.query = result.data;
+
+        // In Express 5.x, req.query is immutable and cannot be reassigned.
+        // To keep req.body, req.params, and req.query behaviour consistent, we overwrite its properties directly.
+        // If any code depends on req.query being a frozen or read-only object, this could break that assumption.
+        try {
+          Object.keys(req.query).forEach((key) => delete req.query[key]);
+          Object.assign(req.query, result.data);
+        } catch (err) {
+          return next(
+            new ApiError(500, "Failed to assign validated query data", err)
+          );
+        }
       }
 
       if (cookies) {

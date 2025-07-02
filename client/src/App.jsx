@@ -8,6 +8,7 @@ import CardsPage from "@/pages/CardsPage";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
 import { Toaster } from "@/components/ui/toaster";
 import ThemeEditorPage from "./pages/ThemeEditorPage";
+import SharePage from "./pages/SharePage";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="edit" element={<EditorPage />} />
           <Route path="theme" element={<ThemeEditorPage />} />
         </Route>
+
+        <Route path="share/:slug" element={<SharePage />} />
       </Routes>
       <Toaster />
     </>

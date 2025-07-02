@@ -64,7 +64,7 @@ export default function Preview({ setSelectedBlockId }) {
         ref={containerRef}
         bgImage={`url(${theme.backgroundImage})`}
         bgSize="cover"
-        bgPosition="center"
+        bgPos="center"
       >
         <Box
           w="350px"

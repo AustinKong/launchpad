@@ -23,7 +23,7 @@ export async function fetchCardById(id) {
 }
 
 export async function fetchCardBySlug(slug) {
-  const response = await fetch(`/api/cards/slug/${slug}?type=slug`);
+  const response = await fetch(`/api/cards/${slug}?type=slug`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch card by slug");
