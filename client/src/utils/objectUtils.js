@@ -18,7 +18,12 @@
  * // result: { a: 1, b: { c: 3, d: 4 }, d: [3, 5] }
  */
 export function deepMerge(defaults, data) {
-  if (typeof defaults !== "object" || typeof data !== "object") {
+  if (
+    defaults === null ||
+    data === null ||
+    typeof defaults !== "object" ||
+    typeof data !== "object"
+  ) {
     return data;
   }
 
