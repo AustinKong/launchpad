@@ -1,14 +1,16 @@
 import { PiCards, PiEye, PiPicnicTable, PiShare } from "react-icons/pi";
 import { Avatar, Box, HStack, Spacer, VStack, Heading, IconButton } from "@chakra-ui/react";
-import { Outlet } from "react-router";
+import { Outlet, useParams } from "react-router";
 import Sidebar from "@/components/Sidebar";
 
-const EDITOR_LINKS = [
-  { label: "Editor", path: "/edit", icon: <PiCards /> },
-  { label: "Theme", path: "/theme", icon: <PiPicnicTable /> },
-];
-
 export default function WorkspaceLayout() {
+  const { slug } = useParams();
+
+  const EDITOR_LINKS = [
+    { label: "Editor", path: `/cards/${slug}/edit`, icon: <PiCards /> },
+    { label: "Theme", path: `/cards/${slug}/theme`, icon: <PiPicnicTable /> },
+  ];
+
   return (
     <HStack w="100vw" h="100vh">
       <Sidebar links={EDITOR_LINKS} />

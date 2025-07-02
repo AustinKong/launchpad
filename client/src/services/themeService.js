@@ -13,7 +13,7 @@ export async function fetchTheme(cardId) {
 
 export async function saveTheme({ cardId, themeEdits }) {
   const response = await authFetch(`/api/cards/${cardId}/theme`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },

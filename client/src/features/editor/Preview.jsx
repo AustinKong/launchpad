@@ -1,4 +1,4 @@
-import { Box, Center, ChakraProvider } from "@chakra-ui/react";
+import { Box, Center, ChakraProvider, Theme } from "@chakra-ui/react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
@@ -7,11 +7,11 @@ import { blockRegistry } from "@/services/registryService";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBlocks } from "@/hooks/useBlocks";
-import { createThemeSystem } from "@/utils/themeSystem";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function Preview({ setSelectedBlockId }) {
   const { blocks, reorderBlocks } = useBlocks();
+  const { theme } = useTheme();
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
 
@@ -37,9 +37,6 @@ export default function Preview({ setSelectedBlockId }) {
     return () => container.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const { theme } = useTheme();
-  const chakraSystem = useMemo(() => createThemeSystem(theme), [theme]);
-
   const handleDragStart = (event) => {
     setDraggedBlockId(event.active.id);
     setSelectedBlockId(event.active.id);
@@ -54,63 +51,68 @@ export default function Preview({ setSelectedBlockId }) {
   };
 
   return (
-    <ChakraProvider value={chakraSystem}>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={fixedCursorSnapCollisionDetection}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToWindowEdges]}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={fixedCursorSnapCollisionDetection}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToWindowEdges]}
+    >
+      <Center
+        h="full"
+        w="70%"
+        ref={containerRef}
+        bgImage={`url(${theme.backgroundImage})`}
+        bgSize="cover"
+        bgPosition="center"
       >
-        <Center h="full" w="70%" ref={containerRef}>
-          <Box
-            w="350px"
-            minH="500px"
-            bgColor="bg.panel"
-            borderRadius="3xl"
-            shadow="md"
-            overflow="hidden"
-            as="main"
-            role="list"
-            ref={cardRef}
+        <Box
+          w="350px"
+          minH="500px"
+          bgColor="bg.panel"
+          borderRadius="3xl"
+          shadow="md"
+          overflow="hidden"
+          as="main"
+          role="list"
+          ref={cardRef}
+        >
+          <SortableContext
+            items={blocks.map((block) => block.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={blocks.map((block) => block.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {blocks.map(({ id, type, config }) => {
-                const Component = blockRegistry[type].Component;
-                const { defaultConfig } = blockRegistry[type].meta;
-                const mergedConfig = deepMerge(defaultConfig, config);
+            {blocks.map(({ id, type, config }) => {
+              const Component = blockRegistry[type].Component;
+              const { defaultConfig } = blockRegistry[type].meta;
+              const mergedConfig = deepMerge(defaultConfig, config);
 
-                return (
-                  <BlockWrapper
-                    id={id}
-                    key={id}
-                    draggedBlockId={draggedBlockId}
-                    setSelectedBlockId={setSelectedBlockId}
-                  >
-                    <Component config={mergedConfig} />
-                  </BlockWrapper>
-                );
-              })}
-            </SortableContext>
-          </Box>
-        </Center>
-        <DragOverlay modifiers={[snapCenterToCursor]} dropAnimation={null}>
-          {draggedBlockId &&
-            (() => {
-              const draggedBlock = blocks.find((block) => block.id === draggedBlockId);
-              const icon = blockRegistry[draggedBlock.type].meta.icon;
               return (
-                <Box h="fit-content" w="fit-content">
-                  {icon}
-                </Box>
+                <BlockWrapper
+                  id={id}
+                  key={id}
+                  draggedBlockId={draggedBlockId}
+                  setSelectedBlockId={setSelectedBlockId}
+                >
+                  <Component config={mergedConfig} />
+                </BlockWrapper>
               );
-            })()}
-        </DragOverlay>
-      </DndContext>
-    </ChakraProvider>
+            })}
+          </SortableContext>
+        </Box>
+      </Center>
+      <DragOverlay modifiers={[snapCenterToCursor]} dropAnimation={null}>
+        {draggedBlockId &&
+          (() => {
+            const draggedBlock = blocks.find((block) => block.id === draggedBlockId);
+            const icon = blockRegistry[draggedBlock.type].meta.icon;
+            return (
+              <Box h="fit-content" w="fit-content">
+                {icon}
+              </Box>
+            );
+          })()}
+      </DragOverlay>
+    </DndContext>
   );
 }
 

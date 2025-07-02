@@ -1,5 +1,6 @@
-import ApiError from "#utils/ApiError";
+import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
+import { deepMerge } from "#utils/objectUtils.js";
 
 export async function getThemeByCardId(cardId) {
   const theme = await prisma.theme.findUnique({
@@ -13,9 +14,10 @@ export async function getThemeByCardId(cardId) {
   return theme;
 }
 
-export async function createTheme({ cardId, config }) {
+export async function createTheme({ cardId, config }, tx = null) {
+  const client = tx || prisma;
   try {
-    const theme = await prisma.theme.create({
+    const theme = await client.theme.create({
       data: {
         cardId,
         config,
@@ -31,11 +33,14 @@ export async function createTheme({ cardId, config }) {
   }
 }
 
-export async function updateTheme({ cardId, config }) {
+export async function updateTheme({ cardId, themeEdits }) {
+  const { config: oldConfig } = await getThemeByCardId(cardId);
+  const newConfig = deepMerge(oldConfig, themeEdits);
+
   try {
     const theme = await prisma.theme.update({
       where: { cardId },
-      data: { config },
+      data: { config: newConfig },
     });
 
     return theme;

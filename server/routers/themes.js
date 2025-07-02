@@ -2,8 +2,8 @@ import express from "express";
 import asyncHandler from "#utils/asyncHandler.js";
 import validateRequest from "#middleware/validateRequest.js";
 import authenticate from "#middleware/authenticate.js";
-import { getThemeByCardIdSchema, updateThemeSchema } from "#schemas/themes";
-import { getThemeByCardId, updateTheme } from "#services/themeService";
+import { getThemeByCardIdSchema, updateThemeSchema } from "#schemas/themes.js";
+import { getThemeByCardId, updateTheme } from "#services/themeService.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -26,7 +26,7 @@ router.patch(
     const { cardId } = req.params;
     const { themeEdits } = req.body;
 
-    const updatedTheme = await updateTheme({ cardId, config: themeEdits });
+    const updatedTheme = await updateTheme({ cardId, themeEdits });
 
     res.status(200).json({ theme: updatedTheme });
   })

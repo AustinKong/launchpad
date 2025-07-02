@@ -1,3 +1,4 @@
+import { useTheme } from "@/hooks/useTheme";
 import { createMapper } from "@/utils/mappers";
 import { Heading as ChakraHeading } from "@chakra-ui/react";
 
@@ -19,6 +20,8 @@ export const meta = {
 };
 
 export default function Heading({ config }) {
+  const { theme } = useTheme();
+  const { headingTypeface } = theme;
   const { text, textStyle, textAlign, margin } = config;
 
   const fontWeightMapper = createMapper({
@@ -51,6 +54,7 @@ export default function Heading({ config }) {
       textAlign={textAlign}
       marginLeft={marginMapper(margin.left)}
       marginRight={marginMapper(margin.right)}
+      fontFamily={headingTypeface}
     >
       {text}
     </ChakraHeading>

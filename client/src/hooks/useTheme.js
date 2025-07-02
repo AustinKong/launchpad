@@ -1,9 +1,14 @@
 import { fetchTheme, saveTheme as saveThemeService } from "@/services/themeService";
 import { useThemeEdits, useThemeEditActions } from "@/stores/themeDraftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchCards } from "@/services/cardService";
 import { useParams } from "react-router";
 import { deepMerge } from "@/utils/objectUtils";
 import { useMemo } from "react";
+import WebFont from "webfontloader";
+import { useFontLoader } from "./useFontLoader";
+
+const typefaceKeys = ["headingTypeface", "bodyTypeface"];
 
 export function useTheme() {
   const { slug } = useParams();
@@ -17,7 +22,7 @@ export function useTheme() {
     isError: cardIsError,
   } = useQuery({
     queryKey: ["cards"],
-    queryFn: () => fetchCards(),
+    queryFn: fetchCards,
     select: (cards) => cards.find((card) => card.slug === slug),
   });
 
@@ -53,13 +58,15 @@ export function useTheme() {
     },
   });
 
-  const isLoading = cardIsLoading || themeIsLoading;
-  const isError = cardIsError || themeIsError;
-
   const mergedTheme = useMemo(
     () => deepMerge(themeConfig || {}, themeEdits),
     [themeConfig, themeEdits],
   );
+
+  const { fontsIsLoading } = useFontLoader(typefaceKeys.map((key) => mergedTheme[key]));
+
+  const isLoading = cardIsLoading || themeIsLoading || fontsIsLoading;
+  const isError = cardIsError || themeIsError;
 
   return {
     theme: mergedTheme,

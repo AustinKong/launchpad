@@ -7,6 +7,7 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import CardsPage from "@/pages/CardsPage";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
 import { Toaster } from "@/components/ui/toaster";
+import ThemeEditorPage from "./pages/ThemeEditorPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
 
         <Route path="cards/:slug" element={<WorkspaceLayout />}>
           <Route path="edit" element={<EditorPage />} />
+          <Route path="theme" element={<ThemeEditorPage />} />
         </Route>
       </Routes>
       <Toaster />

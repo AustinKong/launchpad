@@ -8,7 +8,7 @@ export default function EditorPage() {
   const [selectedBlockId, setSelectedBlockId] = useState(null);
   const { isLoading } = useBlocks();
 
-  if (!isLoading) {
+  if (isLoading) {
     return (
       <Center h="100vh">
         <Loader />
