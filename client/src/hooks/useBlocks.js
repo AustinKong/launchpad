@@ -6,7 +6,7 @@ import {
   useBlockOrders,
 } from "@/stores/blockDraftStore";
 import { fetchBlocks } from "@/services/blockService";
-import { fetchCards, saveCardBlocks } from "@/services/cardService";
+import { fetchCardBySlug, saveCardBlocks } from "@/services/cardService";
 import { useEffect, useMemo, useRef } from "react";
 import { deepMerge } from "@/utils/objectUtils";
 import { useParams } from "react-router";
@@ -25,9 +25,13 @@ export function useBlocks() {
     isLoading: cardIsLoading,
     isError: cardIsError,
   } = useQuery({
-    queryKey: ["cards"],
-    queryFn: () => fetchCards(),
-    select: (cards) => cards.find((card) => card.slug === slug),
+    queryKey: ["card", slug],
+    // FIXME: Find a way to use card ID instead of slug
+    queryFn: () => fetchCardBySlug(slug),
+    initialData: () => {
+      const cards = queryClient.getQueryData(["cards"]) || [];
+      return cards.find((card) => card.slug === slug) || undefined;
+    },
   });
 
   const { id: cardId, blockOrders: initialBlockOrders } = card || {};

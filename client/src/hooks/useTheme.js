@@ -1,11 +1,10 @@
 import { fetchTheme, saveTheme as saveThemeService } from "@/services/themeService";
 import { useThemeEdits, useThemeEditActions } from "@/stores/themeDraftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCards } from "@/services/cardService";
+import { fetchCardBySlug } from "@/services/cardService";
 import { useParams } from "react-router";
 import { deepMerge } from "@/utils/objectUtils";
 import { useMemo } from "react";
-import WebFont from "webfontloader";
 import { useFontLoader } from "./useFontLoader";
 
 const typefaceKeys = ["headingTypeface", "bodyTypeface"];
@@ -21,9 +20,13 @@ export function useTheme() {
     isLoading: cardIsLoading,
     isError: cardIsError,
   } = useQuery({
-    queryKey: ["cards"],
-    queryFn: fetchCards,
-    select: (cards) => cards.find((card) => card.slug === slug),
+    queryKey: ["card", slug],
+    // FIXME: Find a way to use card ID instead of slug
+    queryFn: () => fetchCardBySlug(slug),
+    initialData: () => {
+      const cards = queryClient.getQueryData(["cards"]) || [];
+      return cards.find((card) => card.slug === slug) || undefined;
+    },
   });
 
   const { id: cardId } = card || {};

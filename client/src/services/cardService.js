@@ -12,7 +12,7 @@ export async function fetchCards() {
 }
 
 export async function fetchCardById(id) {
-  const response = await authFetch(`/api/cards/${id}`);
+  const response = await fetch(`/api/cards/${id}?type=id`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch card");
@@ -23,7 +23,7 @@ export async function fetchCardById(id) {
 }
 
 export async function fetchCardBySlug(slug) {
-  const response = await authFetch(`/api/cards/slug/${slug}`);
+  const response = await fetch(`/api/cards/${slug}?type=slug`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch card by slug");

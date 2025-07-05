@@ -1,7 +1,5 @@
-import authFetch from "@/utils/authFetch";
-
 export async function fetchBlocks(cardId) {
-  const response = await authFetch(`/api/cards/${cardId}/blocks`);
+  const response = await fetch(`/api/cards/${cardId}/blocks`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch blocks");
