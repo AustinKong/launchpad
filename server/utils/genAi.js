@@ -13,9 +13,14 @@ const ai = new GoogleGenAI({
 
 export async function generateText(prompt, options = {}) {
   try {
-    const response = await ai.models.generateText({
+    const response = await ai.models.generateContent({
       model: "gemini-2.0-flash-lite",
-      prompt,
+      contents: prompt,
+      config: {
+        systemInstruction: `You are a helpful assistant representing a user on their digital business card. Answer questions based strictly on the provided context. 
+          If you do not have enough information to answer accurately, politely inform the visitor that you cannot answer. Do not invent facts. 
+          Only share information you are confident is correct based on the available data.`,
+      },
       ...options,
     });
     return response.text;

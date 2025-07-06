@@ -53,5 +53,6 @@ export function useDocuments() {
     embedDocument,
     embedIsLoading,
     embedIsError,
+    cardId, // FIXME: Hacky thing to get cardId for sending message test in PersonaPage
   };
 }

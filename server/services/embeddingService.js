@@ -4,6 +4,7 @@ import { getDocumentById } from "#services/documentService.js";
 import { readTxtFile, readPdfFile, readDocxFile } from "#utils/fileUtils.js";
 import { generateEmbedding } from "#utils/genAi.js";
 import { toSql } from "pgvector/utils";
+import { v4 as uuidv4 } from "uuid";
 
 // TODO: Implement more complicated chunking logic
 async function chunkDocument(textContent, chunkSize = 1000, overlap = 200) {
@@ -21,17 +22,14 @@ async function chunkDocument(textContent, chunkSize = 1000, overlap = 200) {
 }
 
 // https://www.npmjs.com/package/pgvector#prisma
-// INFO: If an error that shows (null, [vector ...], "textChunk...", "documentId...") occurs
-// It's because Postgres is not correctly giving a default UUID to the row. Run:
-// `ALTER TABLE "Embedding" ALTER COLUMN id SET DEFAULT gen_random_uuid();`
 async function createEmbedding({ documentId, vector, textChunk }) {
   try {
     const vectorSql = toSql(vector);
     // Add quotation marks around capitalized keywords, else postgres will interpret them as lowercase
     // Convert vector to suported String type before returning
     const [embedding] = await prisma.$queryRaw`
-      INSERT INTO "Embedding" ("documentId", "vector", "textChunk")
-      VALUES (${documentId}, ${vectorSql}::vector, ${textChunk})
+      INSERT INTO "Embedding" ("id", "documentId", "vector", "textChunk")
+      VALUES (${uuidv4()}, ${documentId}, ${vectorSql}::vector, ${textChunk})
       RETURNING id, "documentId", "textChunk", "vector"::text, "createdAt"`;
     return embedding;
   } catch (err) {
@@ -68,5 +66,22 @@ export async function embedDocument(documentId) {
   );
 
   // INFO: Vector column is a string. Convert into array if needed
+  return embeddings;
+}
+
+export async function getEmbeddingsBySemanticSimilarity(cardId, message) {
+  const response = await generateEmbedding(message);
+  const vector = response[0].values;
+  const vectorSql = toSql(vector);
+
+  const embeddings = await prisma.$queryRaw`
+    SELECT embedding."id", embedding."documentId", embedding."vector"::text, embedding."textChunk" 
+    FROM "Document" document
+    JOIN "Embedding" embedding ON document.id = embedding."documentId"
+    WHERE document."cardId" = ${cardId}
+    ORDER BY vector <-> ${vectorSql}::vector 
+    LIMIT 3 
+  `;
+
   return embeddings;
 }

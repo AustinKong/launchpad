@@ -10,7 +10,7 @@ import {
 import {
   createDocumentsSchema,
   embedDocumentSchema,
-} from "#schemas/document.js";
+} from "#schemas/documents.js";
 import validateRequest from "#middleware/validateRequest.js";
 import { embedDocument } from "#services/embeddingService.js";
 

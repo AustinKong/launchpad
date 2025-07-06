@@ -23,6 +23,7 @@
     "pdfjs-dist": "^5.3.31",
     "pg": "^8.16.0",
     "pgvector": "^0.2.1",
+    "uuid": "^11.1.0",
     "zod": "^3.25.64"
   },
   "devDependencies": {

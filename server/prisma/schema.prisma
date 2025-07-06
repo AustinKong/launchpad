@@ -1,11 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
   extensions = [vector]
 }
 
@@ -38,6 +38,7 @@ model Card {
   userId    String
   user      User       @relation(fields: [userId], references: [id])
   Theme     Theme?
+  Assistant Assistant?
   Blocks    Block[]
   Documents Document[]
 }
@@ -62,6 +63,13 @@ model Block {
   @@index([cardId])
 }
 
+model Assistant {
+  createdAt DateTime @default(now())
+
+  cardId String @id
+  card   Card   @relation(fields: [cardId], references: [id])
+}
+
 model Document {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
@@ -74,8 +82,8 @@ model Document {
 }
 
 model Embedding {
-  id        String                     @id @default(uuid())
-  createdAt DateTime                   @default(now())
+  id        String                      @id @default(uuid())
+  createdAt DateTime                    @default(now())
   vector    Unsupported("vector(3072)")
   textChunk String
 

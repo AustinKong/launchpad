@@ -1,5 +1,6 @@
 import { useDocuments } from "@/hooks/useDocuments";
 import { useModal } from "@/hooks/useModal";
+import { getAssistantResponse } from "@/services/assistantService";
 import { fetchCardBySlug } from "@/services/cardService";
 import { embedDocument, uploadDocuments } from "@/services/documentService";
 import {
@@ -9,18 +10,33 @@ import {
   CloseButton,
   Dialog,
   FileUpload,
+  IconButton,
+  Input,
   Loader,
   Portal,
   Table,
   Text,
+  HStack,
+  Blockquote,
 } from "@chakra-ui/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { PiPaperPlane } from "react-icons/pi";
 import { useParams } from "react-router";
 
 export default function PersonaPage() {
   const { isOpen, onOpenChange, open, close } = useModal();
-  const { documents, isLoading, embedDocument, embedIsLoading } = useDocuments();
+  const { documents, isLoading, embedDocument, embedIsLoading, cardId } = useDocuments();
+  const [message, setMessage] = useState("");
+  const [assistantMessage, setAssistantMessage] = useState("");
+
+  const { mutateAsync: sendMessage, isPending } = useMutation({
+    mutationFn: () => getAssistantResponse({ cardId, message }),
+    onSuccess: (reply) => {
+      setAssistantMessage(reply);
+      setMessage("");
+    },
+  });
 
   if (isLoading) {
     return (
@@ -31,7 +47,7 @@ export default function PersonaPage() {
   }
 
   return (
-    <Box>
+    <Box p="2">
       <DocumentUploadModal isOpen={isOpen} onOpenChange={onOpenChange} close={close} />
       <Table.Root>
         <Table.Header>
@@ -53,7 +69,7 @@ export default function PersonaPage() {
                   loading={embedIsLoading}
                   onClick={() => embedDocument(document.id)}
                 >
-                  Embed
+                  {document.isEmbedded ? "Embedded" : "Embed"}
                 </Button>
               </Table.Cell>
             </Table.Row>
@@ -63,6 +79,24 @@ export default function PersonaPage() {
       <Button mt={4} onClick={open}>
         Upload more documents
       </Button>
+      <Blockquote.Root w="full" mt="8">
+        <Blockquote.Content>
+          {assistantMessage || "Ask me anything about the documents!"}
+        </Blockquote.Content>
+      </Blockquote.Root>
+      <HStack mt={4}>
+        <Input
+          w="full"
+          placeholder="Send a message to the AI (TEST)"
+          variant="subtle"
+          disabled={isLoading}
+          onChange={(e) => setMessage(e.target.value)}
+          value={message}
+        />
+        <IconButton onClick={sendMessage} isLoading={isPending} disabled={!message}>
+          <PiPaperPlane />
+        </IconButton>
+      </HStack>
     </Box>
   );
 }
