@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [vector]
 }
 
 enum AuthMethod {
@@ -33,10 +35,11 @@ model Card {
   slug        String   @unique
   blockOrders String[] @default([])
 
-  userId String
-  user   User    @relation(fields: [userId], references: [id])
-  Theme  Theme?
-  Block  Block[]
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  Theme     Theme?
+  Blocks    Block[]
+  Documents Document[]
 }
 
 model Theme {
@@ -57,4 +60,25 @@ model Block {
   card   Card   @relation(fields: [cardId], references: [id])
 
   @@index([cardId])
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  fileName  String
+  filePath  String
+
+  cardId     String
+  card       Card        @relation(fields: [cardId], references: [id])
+  embeddings Embedding[]
+}
+
+model Embedding {
+  id        String                     @id @default(uuid())
+  createdAt DateTime                   @default(now())
+  vector    Unsupported("vector(3072)")
+  textChunk String
+
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id])
 }

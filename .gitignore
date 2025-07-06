@@ -10,7 +10,7 @@ lerna-debug.log*
 client/dist/
 client/dist-ssr/
 server/dist/
-server/uploads/
+server/storage/
 
 .env
 .env.*
