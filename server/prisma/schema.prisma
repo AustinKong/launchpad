@@ -65,6 +65,7 @@ model Block {
 
 model Assistant {
   createdAt DateTime @default(now())
+  config    Json
 
   cardId String @id
   card   Card   @relation(fields: [cardId], references: [id])

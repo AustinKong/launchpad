@@ -68,6 +68,9 @@ export async function createCard({ userId, title, slug }) {
       await createAssistant(
         {
           cardId: card.id,
+          config: {
+            personality: "friendly",
+          },
         },
         tx
       );

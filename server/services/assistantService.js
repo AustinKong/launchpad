@@ -16,13 +16,14 @@ export async function getAssistantByCardId(cardId) {
   return assistant;
 }
 
-export async function createAssistant({ cardId }, tx = null) {
+export async function createAssistant({ cardId, config }, tx = null) {
   const client = tx || prisma;
 
   try {
     const assistant = await client.assistant.create({
       data: {
         cardId,
+        config,
       },
     });
     return assistant;

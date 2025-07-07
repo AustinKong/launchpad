@@ -1,3 +1,4 @@
+import Select from "@/components/Select";
 import { useDocuments } from "@/hooks/useDocuments";
 import { useModal } from "@/hooks/useModal";
 import { getAssistantResponse } from "@/services/assistantService";
@@ -29,6 +30,7 @@ export default function PersonaPage() {
   const { documents, isLoading, embedDocument, embedIsLoading, cardId } = useDocuments();
   const [message, setMessage] = useState("");
   const [assistantMessage, setAssistantMessage] = useState("");
+  const [selectedPersonality, setSelectedPersonality] = useState("friendly");
 
   const { mutateAsync: sendMessage, isPending } = useMutation({
     mutationFn: () => getAssistantResponse({ cardId, message }),
@@ -79,6 +81,12 @@ export default function PersonaPage() {
       <Button mt={4} onClick={open}>
         Upload more documents
       </Button>
+      <Select
+        value={selectedPersonality}
+        onChange={setSelectedPersonality}
+        mt={4}
+        items={["friendly", "funny", "harsh"]}
+      />
       <Blockquote.Root w="full" mt="8">
         <Blockquote.Content>
           {assistantMessage || "Ask me anything about the documents!"}
