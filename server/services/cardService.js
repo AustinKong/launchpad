@@ -1,6 +1,5 @@
 import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { getAddedElements, getRemovedElements } from "#utils/arrayUtils.js";
 import {
   createBlock,
@@ -53,34 +52,15 @@ export async function createCard({ userId, title, slug }) {
         },
       });
 
-      await createTheme(
-        {
-          cardId: card.id,
-          config: {
-            headingTypeface: "Roboto",
-            bodyTypeface: "Roboto",
-            backgroundImage: null,
-          },
-        },
-        tx
-      );
-
-      await createAssistant(
-        {
-          cardId: card.id,
-          config: {
-            personality: "friendly",
-          },
-        },
-        tx
-      );
+      await createTheme({ cardId: card.id }, tx);
+      await createAssistant({ cardId: card.id }, tx);
 
       return card;
     });
 
     return result;
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+    if (err?.code === "P2002") {
       throw new ApiError(400, "Card with this URL already exists");
     }
     throw new ApiError(500, "Internal server error", err.message);

@@ -85,7 +85,10 @@ export default function PersonaPage() {
         value={selectedPersonality}
         onChange={setSelectedPersonality}
         mt={4}
-        items={["friendly", "funny", "harsh"]}
+        items={[
+          { label: "Friendly", value: "friendly" },
+          { label: "Professional", value: "professional" },
+        ]}
       />
       <Blockquote.Root w="full" mt="8">
         <Blockquote.Content>
