@@ -92,8 +92,8 @@ export default function SharePage() {
         role="list"
       >
         {blocks.map(({ id, type, config }) => {
-          const Component = blockRegistry[type].Component;
-          const { defaultConfig } = blockRegistry[type].meta;
+          const Component = blockRegistry.get(type).Component;
+          const { defaultConfig } = blockRegistry.get(type).meta;
           const mergedConfig = deepMerge(defaultConfig, config);
 
           return <Component key={id} config={mergedConfig} />;

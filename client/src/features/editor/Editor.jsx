@@ -22,13 +22,13 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
   if (!selectedBlockId) {
     return (
       <VStack w="30%" bgColor="bg.panel" h="full" p="4" alignItems="stretch">
-        {Object.entries(blockRegistry).map(([type, block]) => (
+        {blockRegistry.list().map(({ type, meta }) => (
           <Button
             key={type}
             onClick={() =>
               createBlock({
                 type,
-                config: block.meta.defaultConfig,
+                config: meta.defaultConfig,
               })
             }
           >
@@ -43,7 +43,7 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
   }
 
   const { id, type, config } = blocks.find((block) => block.id === selectedBlockId);
-  const { fields, defaultConfig } = blockRegistry[type].meta;
+  const { fields, defaultConfig } = blockRegistry.get(type).meta;
   // In case any part of config is missing in database, we merge it with defaultConfig
   const mergedConfig = deepMerge(defaultConfig, config);
   const groupedFields = fields.reduce((acc, { group, ...field }) => {
@@ -67,7 +67,7 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
               <VStack gap="2" w="full">
                 {fields.map((field) => {
                   const { key, fieldType, ...rest } = field;
-                  const FieldComponent = fieldRegistry[fieldType].Component;
+                  const FieldComponent = fieldRegistry.get(fieldType).Component;
                   return (
                     <FieldComponent
                       key={key}
