@@ -1,14 +1,12 @@
 import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
+
 import validateRequest from "#middleware/validateRequest.js";
-import {
-  getAssistantByCardId,
-  sendMessage,
-} from "#services/assistantService.js";
 import {
   getAssistantByCardIdSchema,
   sendMessageSchema,
 } from "#schemas/assistants.js";
+import { getAssistantByCardId, sendMessage } from "#services/assistant.js";
+import asyncHandler from "#utils/asyncHandler.js";
 
 const router = express.Router({ mergeParams: true });
 

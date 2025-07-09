@@ -1,5 +1,5 @@
-import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
+import ApiError from "#utils/ApiError.js";
 
 export async function getBlocksByCardId(cardId) {
   const blocks = await prisma.block.findMany({
@@ -30,7 +30,7 @@ export async function createBlock({ cardId, id, type, config }, tx = null) {
   }
 }
 
-export async function deleteBlock({ id }, tx = null) {
+export async function deleteBlock(id, tx = null) {
   const client = tx || prisma;
   try {
     const block = await client.block.delete({

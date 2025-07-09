@@ -1,6 +1,6 @@
 import ApiError from "#utils/ApiError.js";
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res, _) {
   console.error(err);
   if (err instanceof ApiError && err.statusCode < 500) {
     return res.status(err.statusCode).json({

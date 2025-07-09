@@ -3,7 +3,7 @@ import asyncHandler from "#utils/asyncHandler.js";
 import validateRequest from "#middleware/validateRequest.js";
 import authenticate from "#middleware/authenticate.js";
 import { getThemeByCardIdSchema, updateThemeSchema } from "#schemas/themes.js";
-import { getThemeByCardId, updateTheme } from "#services/themeService.js";
+import { getThemeByCardId, updateTheme } from "#services/theme.js";
 
 const router = express.Router({ mergeParams: true });
 

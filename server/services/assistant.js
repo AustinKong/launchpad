@@ -1,8 +1,8 @@
-import ApiError from "#utils/ApiError.js";
-import prisma from "#prisma/prismaClient.js";
-import { getEmbeddingsBySemanticSimilarity } from "#services/embeddingService.js";
-import { generateText } from "#utils/genAi.js";
 import defaultAssistantConfig from "#data/defaultAssistantConfig.js";
+import prisma from "#prisma/prismaClient.js";
+import { getEmbeddingsBySemanticSimilarity } from "#services/embedding.js";
+import ApiError from "#utils/ApiError.js";
+import { generateText } from "#utils/genAi.js";
 
 export async function getAssistantByCardId(cardId) {
   const assistant = await prisma.assistant.findUnique({

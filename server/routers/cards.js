@@ -13,7 +13,7 @@ import {
   createCard,
   batchUpdateCardBlocks,
   getCardBySlug,
-} from "#services/cardService.js";
+} from "#services/card.js";
 
 const router = express.Router();
 

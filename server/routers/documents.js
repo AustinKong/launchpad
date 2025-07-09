@@ -6,13 +6,13 @@ import {
   createDocument,
   getDocumentById,
   getDocumentsByCardId,
-} from "#services/documentService.js";
+} from "#services/document.js";
 import {
   createDocumentsSchema,
   embedDocumentSchema,
 } from "#schemas/documents.js";
 import validateRequest from "#middleware/validateRequest.js";
-import { embedDocument } from "#services/embeddingService.js";
+import { embedDocument } from "#services/embedding.js";
 
 const router = express.Router({ mergeParams: true });
 

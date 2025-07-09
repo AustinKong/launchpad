@@ -2,11 +2,7 @@ import express from "express";
 import asyncHandler from "#utils/asyncHandler.js";
 import validateRequest from "#middleware/validateRequest.js";
 import { registerSchema, loginSchema } from "#schemas/auth.js";
-import {
-  login,
-  registerWithEmail,
-  refreshTokens,
-} from "#services/authService.js";
+import { login, registerWithEmail, refreshTokens } from "#services/auth.js";
 
 const router = express.Router();
 
