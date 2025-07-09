@@ -7,8 +7,14 @@ import ApiError from "#utils/ApiError.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const storageDir = path.join(__dirname, "..", "storage");
 const uploadDir = path.join(__dirname, "..", "storage", "uploads");
 const hotDir = path.join(__dirname, "..", "storage", "documents");
+
+if (!fs.existsSync(storageDir)) {
+  fs.mkdirSync(storageDir);
+}
+
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
