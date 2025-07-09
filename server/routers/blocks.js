@@ -10,7 +10,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   "/",
   validateRequest(getBlocksByCardIdSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const blocks = await getBlocksByCardId(cardId);
 

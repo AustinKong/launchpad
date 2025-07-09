@@ -10,7 +10,7 @@ const router = express.Router({ mergeParams: true });
 router.get(
   "/",
   validateRequest(getThemeByCardIdSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const theme = await getThemeByCardId(cardId);
 
@@ -22,7 +22,7 @@ router.patch(
   "/",
   authenticate,
   validateRequest(updateThemeSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const { themeEdits } = req.body;
 

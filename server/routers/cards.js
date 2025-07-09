@@ -20,7 +20,7 @@ const router = express.Router();
 router.get(
   "/",
   authenticate,
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const cards = await getCardsByUserId(userId);
 
@@ -31,7 +31,7 @@ router.get(
 router.get(
   "/:identifier",
   validateRequest(getCardByIdentifierSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { identifier } = req.params;
     const type = req.query.type ?? "id";
 
@@ -50,7 +50,7 @@ router.post(
   "/",
   authenticate,
   validateRequest(createCardSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const userId = req.user.sub;
     const { title, slug } = req.body;
 
@@ -64,7 +64,7 @@ router.patch(
   "/:cardId/batch",
   authenticate,
   validateRequest(batchUpdateCardBlockSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const { blockEdits, blockOrders } = req.body;
 
@@ -81,7 +81,7 @@ router.patch(
 // TODO: Implement update card functionality
 router.put(
   "/:cardId",
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     res.sendStatus(501);
   })
 );
