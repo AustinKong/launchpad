@@ -1,9 +1,9 @@
 import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
+
 import validateRequest from "#middleware/validateRequest.js";
-import authenticate from "#middleware/authenticate.js";
 import { getBlocksByCardIdSchema } from "#schemas/blocks.js";
 import { getBlocksByCardId } from "#services/block.js";
+import asyncHandler from "#utils/asyncHandler.js";
 
 const router = express.Router({ mergeParams: true });
 
