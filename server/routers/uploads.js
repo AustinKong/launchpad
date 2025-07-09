@@ -17,6 +17,7 @@ router.post(
 
 router.post(
   "/attachment",
+  authenticate,
   attachmentUpload,
   asyncHandler(async (req, res) => {
     const attachmentUrl = `${req.protocol}://${req.get("host")}/uploads/${
