@@ -1,24 +1,14 @@
-import { fetchCardBySlug } from "@/services/cardService";
-import { fetchDocuments, embedDocument as embedDocumentService } from "@/services/documentService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
+
+import { useCard } from "./useCard";
+
+import { fetchDocuments, embedDocument as embedDocumentService } from "@/services/documentService";
 
 export function useDocuments() {
   const { slug } = useParams();
   const queryClient = useQueryClient();
-
-  const {
-    data: card,
-    isLoading: cardIsLoading,
-    isError: cardIsError,
-  } = useQuery({
-    queryKey: ["card", slug],
-    queryFn: () => fetchCardBySlug(slug),
-    initialData: () => {
-      const cards = queryClient.getQueryData(["cards"]) || [];
-      return cards.find((card) => card.slug === slug) || undefined;
-    },
-  });
+  const { card, isLoading: cardIsLoading, isError: cardIsError } = useCard({ slug });
 
   const { id: cardId } = card || {};
 

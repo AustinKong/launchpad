@@ -1,15 +1,18 @@
+import { deepMerge } from "@launchpad/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef } from "react";
+import { useParams } from "react-router";
+
+import { useCard } from "./useCard";
+
+import { fetchBlocks } from "@/services/blockService";
+import { saveCardBlocks } from "@/services/cardService";
 import {
   useBlockEditActions,
   useBlockEdits,
   useBlockOrderActions,
   useBlockOrders,
 } from "@/stores/blockDraftStore";
-import { fetchBlocks } from "@/services/blockService";
-import { fetchCardBySlug, saveCardBlocks } from "@/services/cardService";
-import { useEffect, useMemo, useRef } from "react";
-import { deepMerge } from "@launchpad/shared";
-import { useParams } from "react-router";
 
 export function useBlocks() {
   const { slug } = useParams();
@@ -20,19 +23,7 @@ export function useBlocks() {
   const { editBlock, deleteBlock, createBlock, resetBlockEdits } = useBlockEditActions();
   const { reorderBlocks, resetBlockOrders } = useBlockOrderActions();
 
-  const {
-    data: card,
-    isLoading: cardIsLoading,
-    isError: cardIsError,
-  } = useQuery({
-    queryKey: ["card", slug],
-    // FIXME: Find a way to use card ID instead of slug
-    queryFn: () => fetchCardBySlug(slug),
-    initialData: () => {
-      const cards = queryClient.getQueryData(["cards"]) || [];
-      return cards.find((card) => card.slug === slug) || undefined;
-    },
-  });
+  const { card, isLoading: cardIsLoading, isError: cardIsError } = useCard({ slug });
 
   const { id: cardId, blockOrders: initialBlockOrders } = card || {};
 

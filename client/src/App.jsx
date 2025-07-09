@@ -1,15 +1,16 @@
 import { Route, Routes } from "react-router";
+
 import AuthLayout from "@/components/layouts/AuthLayout";
-import EditorPage from "@/pages/EditorPage";
-import RegisterPage from "@/pages/RegisterPage";
-import LoginPage from "@/pages/LoginPage";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import CardsPage from "@/pages/CardsPage";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
 import { Toaster } from "@/components/ui/toaster";
-import ThemeEditorPage from "@/pages/ThemeEditorPage";
-import SharePage from "@/pages/SharePage";
+import CardsPage from "@/pages/CardsPage";
+import EditorPage from "@/pages/EditorPage";
+import LoginPage from "@/pages/LoginPage";
 import PersonaPage from "@/pages/PersonaPage";
+import RegisterPage from "@/pages/RegisterPage";
+import SharePage from "@/pages/SharePage";
+import ThemeEditorPage from "@/pages/ThemeEditorPage";
 
 function App() {
   return (
