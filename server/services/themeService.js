@@ -1,6 +1,7 @@
 import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
 import { deepMerge } from "#utils/objectUtils.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library.js";
 
 export async function getThemeByCardId(cardId) {
   const theme = await prisma.theme.findUnique({
@@ -26,7 +27,7 @@ export async function createTheme({ cardId, config }, tx = null) {
 
     return theme;
   } catch (err) {
-    if (err.code === "P2002") {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
       throw new ApiError(400, "Theme for this card already exists");
     }
     throw new ApiError(500, "Internal server error", err.message);
@@ -45,7 +46,7 @@ export async function updateTheme({ cardId, themeEdits }) {
 
     return theme;
   } catch (err) {
-    if (err.code === "P2025") {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
       throw new ApiError(404, "Theme not found for this card");
     }
     throw new ApiError(500, "Internal server error", err.message);

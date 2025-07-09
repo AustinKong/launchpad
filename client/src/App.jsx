@@ -7,8 +7,9 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import CardsPage from "@/pages/CardsPage";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
 import { Toaster } from "@/components/ui/toaster";
-import ThemeEditorPage from "./pages/ThemeEditorPage";
-import SharePage from "./pages/SharePage";
+import ThemeEditorPage from "@/pages/ThemeEditorPage";
+import SharePage from "@/pages/SharePage";
+import PersonaPage from "@/pages/PersonaPage";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="cards/:slug" element={<WorkspaceLayout />}>
           <Route path="edit" element={<EditorPage />} />
           <Route path="theme" element={<ThemeEditorPage />} />
+          <Route path="persona" element={<PersonaPage />} />
         </Route>
 
         <Route path="share/:slug" element={<SharePage />} />

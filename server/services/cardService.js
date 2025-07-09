@@ -8,6 +8,7 @@ import {
   updateBlock,
 } from "#services/blockService.js";
 import { createTheme } from "#services/themeService.js";
+import { createAssistant } from "#services/assistantService.js";
 
 export async function getCardsByUserId(userId) {
   const cards = await prisma.card.findMany({
@@ -59,6 +60,16 @@ export async function createCard({ userId, title, slug }) {
             headingTypeface: "Roboto",
             bodyTypeface: "Roboto",
             backgroundImage: null,
+          },
+        },
+        tx
+      );
+
+      await createAssistant(
+        {
+          cardId: card.id,
+          config: {
+            personality: "friendly",
           },
         },
         tx
