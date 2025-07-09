@@ -3,7 +3,7 @@ import { fetchBlocks } from "@/services/blockService";
 import { fetchCardBySlug } from "@/services/cardService";
 import { blockRegistry } from "@/services/registryService";
 import { fetchTheme } from "@/services/themeService";
-import { deepMerge } from "@/utils/objectUtils";
+import { deepMerge } from "@launchpad/shared";
 import {
   Center,
   Loader,

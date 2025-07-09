@@ -8,7 +8,7 @@ import {
 import { fetchBlocks } from "@/services/blockService";
 import { fetchCardBySlug, saveCardBlocks } from "@/services/cardService";
 import { useEffect, useMemo, useRef } from "react";
-import { deepMerge } from "@/utils/objectUtils";
+import { deepMerge } from "@launchpad/shared";
 import { useParams } from "react-router";
 
 export function useBlocks() {

@@ -1,6 +1,6 @@
 import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
-import { getAddedElements, getRemovedElements } from "#utils/arrayUtils.js";
+import { getAddedElements, getRemovedElements } from "@launchpad/shared";
 import {
   createBlock,
   deleteBlock,

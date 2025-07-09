@@ -28,7 +28,8 @@
     "uuid": "^11.1.0",
     "webfontloader": "^1.6.28",
     "zod": "^3.25.67",
-    "zustand": "^5.0.5"
+    "zustand": "^5.0.5",
+    "@launchpad/shared": "file:../shared"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

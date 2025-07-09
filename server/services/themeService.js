@@ -1,6 +1,6 @@
 import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
-import { deepMerge } from "#utils/objectUtils.js";
+import { deepMerge } from "@launchpad/shared";
 import defaultThemeConfig from "#data/defaultThemeConfig.js";
 
 export async function getThemeByCardId(cardId) {

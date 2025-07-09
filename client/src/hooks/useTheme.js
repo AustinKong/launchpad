@@ -3,7 +3,7 @@ import { useThemeEdits, useThemeEditActions } from "@/stores/themeDraftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCardBySlug } from "@/services/cardService";
 import { useParams } from "react-router";
-import { deepMerge } from "@/utils/objectUtils";
+import { deepMerge } from "@launchpad/shared";
 import { useMemo } from "react";
 import { useFontLoader } from "./useFontLoader";
 
