@@ -18,9 +18,9 @@ const router = express.Router({ mergeParams: true });
 
 router.post(
   "/",
+  authenticate,
   documentUpload,
   validateRequest(createDocumentsSchema),
-  authenticate,
   asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const documents = await Promise.all(
