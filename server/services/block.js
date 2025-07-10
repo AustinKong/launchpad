@@ -1,6 +1,5 @@
-import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import ApiError from "#utils/ApiError.js";
 
 export async function getBlocksByCardId(cardId) {
   const blocks = await prisma.block.findMany({
@@ -24,14 +23,14 @@ export async function createBlock({ cardId, id, type, config }, tx = null) {
 
     return block;
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+    if (err?.code === "P2002") {
       throw new ApiError(400, "Block with this ID already exists");
     }
     throw new ApiError(500, "Internal server error", err.message);
   }
 }
 
-export async function deleteBlock({ id }, tx = null) {
+export async function deleteBlock(id, tx = null) {
   const client = tx || prisma;
   try {
     const block = await client.block.delete({
@@ -40,7 +39,7 @@ export async function deleteBlock({ id }, tx = null) {
 
     return block;
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
+    if (err?.code === "P2025") {
       throw new ApiError(404, "Block not found");
     }
     throw new ApiError(500, "Internal server error", err.message);
@@ -57,7 +56,7 @@ export async function updateBlock({ id, config }, tx = null) {
 
     return block;
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2025") {
+    if (err?.code === "P2025") {
       throw new ApiError(404, "Block not found");
     }
     throw new ApiError(500, "Internal server error", err.message);

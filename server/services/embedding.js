@@ -1,10 +1,11 @@
-import ApiError from "#utils/ApiError.js";
-import prisma from "#prisma/prismaClient.js";
-import { getDocumentById } from "#services/documentService.js";
-import { readTxtFile, readPdfFile, readDocxFile } from "#utils/fileUtils.js";
-import { generateEmbedding } from "#utils/genAi.js";
 import { toSql } from "pgvector/utils";
 import { v4 as uuidv4 } from "uuid";
+
+import prisma from "#prisma/prismaClient.js";
+import { getDocumentById } from "#services/document.js";
+import ApiError from "#utils/ApiError.js";
+import { readTxtFile, readPdfFile, readDocxFile } from "#utils/fileUtils.js";
+import { generateEmbedding } from "#utils/genAi.js";
 
 // TODO: Implement more complicated chunking logic
 async function chunkDocument(textContent, chunkSize = 1000, overlap = 200) {
@@ -23,18 +24,14 @@ async function chunkDocument(textContent, chunkSize = 1000, overlap = 200) {
 
 // https://www.npmjs.com/package/pgvector#prisma
 async function createEmbedding({ documentId, vector, textChunk }) {
-  try {
-    const vectorSql = toSql(vector);
-    // Add quotation marks around capitalized keywords, else postgres will interpret them as lowercase
-    // Convert vector to suported String type before returning
-    const [embedding] = await prisma.$queryRaw`
-      INSERT INTO "Embedding" ("id", "documentId", "vector", "textChunk")
-      VALUES (${uuidv4()}, ${documentId}, ${vectorSql}::vector, ${textChunk})
-      RETURNING id, "documentId", "textChunk", "vector"::text, "createdAt"`;
-    return embedding;
-  } catch (err) {
-    throw new ApiError(500, "Internal server error", err.message);
-  }
+  const vectorSql = toSql(vector);
+  // Add quotation marks around capitalized keywords, else postgres will interpret them as lowercase
+  // Convert vector to suported String type before returning
+  const [embedding] = await prisma.$queryRaw`
+    INSERT INTO "Embedding" ("id", "documentId", "vector", "textChunk")
+    VALUES (${uuidv4()}, ${documentId}, ${vectorSql}::vector, ${textChunk})
+    RETURNING id, "documentId", "textChunk", "vector"::text, "createdAt"`;
+  return embedding;
 }
 
 export async function embedDocument(documentId) {

@@ -3,7 +3,7 @@ import { fetchBlocks } from "@/services/blockService";
 import { fetchCardBySlug } from "@/services/cardService";
 import { blockRegistry } from "@/services/registryService";
 import { fetchTheme } from "@/services/themeService";
-import { deepMerge } from "@/utils/objectUtils";
+import { deepMerge } from "@launchpad/shared";
 import {
   Center,
   Loader,
@@ -92,8 +92,8 @@ export default function SharePage() {
         role="list"
       >
         {blocks.map(({ id, type, config }) => {
-          const Component = blockRegistry[type].Component;
-          const { defaultConfig } = blockRegistry[type].meta;
+          const Component = blockRegistry.get(type).Component;
+          const { defaultConfig } = blockRegistry.get(type).meta;
           const mergedConfig = deepMerge(defaultConfig, config);
 
           return <Component key={id} config={mergedConfig} />;

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+
 import ApiError from "#utils/ApiError.js";
 
 const ACCESS_TTL = "3h";

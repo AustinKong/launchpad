@@ -1,18 +1,19 @@
 import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
+
 import authenticate from "#middleware/authenticate.js";
 import { documentUpload } from "#middleware/fileUpload.js";
-import {
-  createDocument,
-  getDocumentById,
-  getDocumentsByCardId,
-} from "#services/documentService.js";
+import validateRequest from "#middleware/validateRequest.js";
 import {
   createDocumentsSchema,
   embedDocumentSchema,
 } from "#schemas/documents.js";
-import validateRequest from "#middleware/validateRequest.js";
-import { embedDocument } from "#services/embeddingService.js";
+import {
+  createDocument,
+  getDocumentById,
+  getDocumentsByCardId,
+} from "#services/document.js";
+import { embedDocument } from "#services/embedding.js";
+import asyncHandler from "#utils/asyncHandler.js";
 
 const router = express.Router({ mergeParams: true });
 

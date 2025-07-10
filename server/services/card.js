@@ -1,14 +1,10 @@
-import ApiError from "#utils/ApiError.js";
+import { getAddedElements, getRemovedElements } from "@launchpad/shared";
+
 import prisma from "#prisma/prismaClient.js";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { getAddedElements, getRemovedElements } from "#utils/arrayUtils.js";
-import {
-  createBlock,
-  deleteBlock,
-  updateBlock,
-} from "#services/blockService.js";
-import { createTheme } from "#services/themeService.js";
-import { createAssistant } from "#services/assistantService.js";
+import { createAssistant } from "#services/assistant.js";
+import { createBlock, deleteBlock, updateBlock } from "#services/block.js";
+import { createTheme } from "#services/theme.js";
+import ApiError from "#utils/ApiError.js";
 
 export async function getCardsByUserId(userId) {
   const cards = await prisma.card.findMany({
@@ -18,9 +14,9 @@ export async function getCardsByUserId(userId) {
   return cards;
 }
 
-export async function getCardById(cardId) {
+export async function getCardById(id) {
   const card = await prisma.card.findUnique({
-    where: { id: cardId },
+    where: { id },
   });
 
   if (!card) {
@@ -53,47 +49,43 @@ export async function createCard({ userId, title, slug }) {
         },
       });
 
-      await createTheme(
-        {
-          cardId: card.id,
-          config: {
-            headingTypeface: "Roboto",
-            bodyTypeface: "Roboto",
-            backgroundImage: null,
-          },
-        },
-        tx
-      );
-
-      await createAssistant(
-        {
-          cardId: card.id,
-          config: {
-            personality: "friendly",
-          },
-        },
-        tx
-      );
+      await createTheme({ cardId: card.id }, tx);
+      await createAssistant({ cardId: card.id }, tx);
 
       return card;
     });
 
     return result;
   } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+    if (err?.code === "P2002") {
       throw new ApiError(400, "Card with this URL already exists");
     }
     throw new ApiError(500, "Internal server error", err.message);
   }
 }
 
+export async function deleteCard(id) {
+  try {
+    const card = await prisma.card.delete({
+      where: { id },
+    });
+
+    return card;
+  } catch (err) {
+    if (err?.code === "P2025") {
+      throw new ApiError(404, "Card not found");
+    }
+    throw new ApiError(500, "Internal server error", err.message);
+  }
+}
+
 export async function batchUpdateCardBlocks({
-  cardId,
+  cardId: id,
   blockEdits,
   blockOrders,
 }) {
   const card = await prisma.card.findUnique({
-    where: { id: cardId },
+    where: { id },
   });
 
   if (!card) {
@@ -105,7 +97,9 @@ export async function batchUpdateCardBlocks({
   const createdBlockIds = getAddedElements(originalBlockOrders, blockOrders);
   const removedBlockIds = getRemovedElements(originalBlockOrders, blockOrders);
   const updatedBlockIds = Object.keys(blockEdits).filter(
-    (id) => originalBlockOrders.includes(id) && !removedBlockIds.includes(id)
+    (blockId) =>
+      originalBlockOrders.includes(blockId) &&
+      !removedBlockIds.includes(blockId)
   );
 
   // Initiates a transaction. First creates new blocks, then deletes removed blocks,
@@ -119,7 +113,7 @@ export async function batchUpdateCardBlocks({
         }
         return createBlock(
           {
-            cardId,
+            cardId: id,
             id: blockId,
             type: blockEdit.type,
             config: blockEdit.config,
@@ -131,7 +125,7 @@ export async function batchUpdateCardBlocks({
 
     await Promise.all(
       removedBlockIds.map((blockId) => {
-        return deleteBlock({ id: blockId }, tx);
+        return deleteBlock(blockId, tx);
       })
     );
 
@@ -146,7 +140,7 @@ export async function batchUpdateCardBlocks({
     );
 
     const updatedCard = await tx.card.update({
-      where: { id: cardId },
+      where: { id },
       data: {
         blockOrders,
       },
@@ -154,7 +148,7 @@ export async function batchUpdateCardBlocks({
 
     const blocks = await tx.block.findMany({
       where: {
-        cardId,
+        cardId: id,
       },
     });
 

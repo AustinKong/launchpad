@@ -44,7 +44,7 @@ async function authFetch(url, options = {}) {
       ...options,
       credentials: "include",
     });
-  } catch (err) {
+  } catch {
     throw new Error("Unauthorized");
   }
 }

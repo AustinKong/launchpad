@@ -1,5 +1,5 @@
-import ApiError from "#utils/ApiError.js";
 import prisma from "#prisma/prismaClient.js";
+import ApiError from "#utils/ApiError.js";
 
 export async function getDocumentsByCardId(cardId) {
   let documents = await prisma.document.findMany({
@@ -8,6 +8,7 @@ export async function getDocumentsByCardId(cardId) {
       embeddings: true,
     },
   });
+
   documents = documents.map((doc) => {
     const { embeddings, ...rest } = doc;
     return {
@@ -32,18 +33,27 @@ export async function getDocumentById(id) {
 }
 
 export async function createDocument({ cardId, fileName, filePath }) {
+  const document = await prisma.document.create({
+    data: {
+      cardId,
+      fileName,
+      filePath,
+    },
+  });
+  return document;
+}
+
+export async function deleteDocument(id) {
   try {
-    const document = await prisma.document.create({
-      data: {
-        cardId,
-        fileName,
-        filePath,
-      },
+    const document = await prisma.document.delete({
+      where: { id },
     });
+
     return document;
   } catch (err) {
+    if (err?.code === "P2025") {
+      throw new ApiError(404, "Document not found");
+    }
     throw new ApiError(500, "Internal server error", err.message);
   }
 }
-
-export async function deleteDocument(id) {}

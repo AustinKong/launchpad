@@ -48,7 +48,7 @@ model Theme {
   config    Json
 
   cardId String @id
-  card   Card   @relation(fields: [cardId], references: [id])
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }
 
 model Block {
@@ -58,7 +58,7 @@ model Block {
   config    Json
 
   cardId String
-  card   Card   @relation(fields: [cardId], references: [id])
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
   @@index([cardId])
 }
@@ -68,7 +68,7 @@ model Assistant {
   config    Json
 
   cardId String @id
-  card   Card   @relation(fields: [cardId], references: [id])
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }
 
 model Document {
@@ -78,7 +78,7 @@ model Document {
   filePath  String
 
   cardId     String
-  card       Card        @relation(fields: [cardId], references: [id])
+  card       Card        @relation(fields: [cardId], references: [id], onDelete: Cascade)
   embeddings Embedding[]
 }
 
@@ -89,5 +89,5 @@ model Embedding {
   textChunk String
 
   documentId String
-  document   Document @relation(fields: [documentId], references: [id])
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }

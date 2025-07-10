@@ -1,19 +1,16 @@
 import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
+
 import validateRequest from "#middleware/validateRequest.js";
 import { registerSchema, loginSchema } from "#schemas/auth.js";
-import {
-  login,
-  registerWithEmail,
-  refreshTokens,
-} from "#services/authService.js";
+import { login, registerWithEmail, refreshTokens } from "#services/auth.js";
+import asyncHandler from "#utils/asyncHandler.js";
 
 const router = express.Router();
 
 router.post(
   "/register",
   validateRequest(registerSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const { accessToken, refreshToken } = await registerWithEmail({
       email,
@@ -28,7 +25,7 @@ router.post(
 router.post(
   "/login",
   validateRequest(loginSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const { accessToken, refreshToken } = await login({ email, password });
 
@@ -39,7 +36,7 @@ router.post(
 
 router.post(
   "/refresh",
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const oldRefreshToken = req.cookies?.refreshToken;
     const { accessToken, refreshToken } = await refreshTokens({
       oldRefreshToken,
@@ -52,7 +49,7 @@ router.post(
 
 router.post(
   "/logout",
-  asyncHandler(function (req, res) {
+  asyncHandler((req, res) => {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     res.sendStatus(204);

@@ -1,11 +1,14 @@
 import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
+
+import authenticate from "#middleware/authenticate.js";
 import { attachmentUpload, imageUpload } from "#middleware/fileUpload.js";
+import asyncHandler from "#utils/asyncHandler.js";
 
 const router = express.Router();
 
 router.post(
   "/image",
+  authenticate,
   imageUpload,
   asyncHandler(async (req, res) => {
     const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${

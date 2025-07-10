@@ -1,10 +1,11 @@
-import { Provider as ChakraProvider } from "@/components/ui/provider";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import "./index.css";
-import App from "./App.jsx";
+
+import "@/index.css";
+import App from "@/App.jsx";
+import { Provider as ChakraProvider } from "@/components/ui/provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {

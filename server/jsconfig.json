@@ -7,7 +7,8 @@
       "#utils/*": ["./utils/*"],
       "#services/*": ["./services/*"],
       "#prisma/*": ["./prisma/*"],
-      "#schemas/*": ["./schemas/*"]
+      "#schemas/*": ["./schemas/*"],
+      "#data/*": ["./data/*"]
     }
   },
   "include": ["./**/*.js"]

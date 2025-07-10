@@ -38,7 +38,7 @@ export default function ThemeEditorPage() {
             <VStack gap="2" w="full">
               {fields.map((field) => {
                 const { key, fieldType, ...rest } = field;
-                const FieldComponent = fieldRegistry[fieldType].Component;
+                const FieldComponent = fieldRegistry.get(fieldType).Component;
                 return (
                   <FieldComponent
                     key={key}

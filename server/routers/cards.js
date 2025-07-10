@@ -1,7 +1,7 @@
 import express from "express";
-import asyncHandler from "#utils/asyncHandler.js";
-import validateRequest from "#middleware/validateRequest.js";
+
 import authenticate from "#middleware/authenticate.js";
+import validateRequest from "#middleware/validateRequest.js";
 import {
   batchUpdateCardBlockSchema,
   createCardSchema,
@@ -13,14 +13,15 @@ import {
   createCard,
   batchUpdateCardBlocks,
   getCardBySlug,
-} from "#services/cardService.js";
+} from "#services/card.js";
+import asyncHandler from "#utils/asyncHandler.js";
 
 const router = express.Router();
 
 router.get(
   "/",
   authenticate,
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const cards = await getCardsByUserId(userId);
 
@@ -31,16 +32,14 @@ router.get(
 router.get(
   "/:identifier",
   validateRequest(getCardByIdentifierSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { identifier } = req.params;
-    const type = req.query.type ?? "id";
+    const { type } = req.query;
 
-    let card;
-    if (type === "id") {
-      card = await getCardById(identifier);
-    } else {
-      card = await getCardBySlug(identifier);
-    }
+    const card =
+      type === "slug"
+        ? await getCardBySlug(identifier)
+        : await getCardById(identifier);
 
     res.status(200).json({ card });
   })
@@ -50,7 +49,7 @@ router.post(
   "/",
   authenticate,
   validateRequest(createCardSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const userId = req.user.sub;
     const { title, slug } = req.body;
 
@@ -64,7 +63,7 @@ router.patch(
   "/:cardId/batch",
   authenticate,
   validateRequest(batchUpdateCardBlockSchema),
-  asyncHandler(async function (req, res) {
+  asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const { blockEdits, blockOrders } = req.body;
 
@@ -75,14 +74,6 @@ router.patch(
     });
 
     res.status(200).json({ card, blocks });
-  })
-);
-
-// TODO: Implement update card functionality
-router.put(
-  "/:cardId",
-  asyncHandler(async function (req, res) {
-    res.sendStatus(501);
   })
 );
 

@@ -2,7 +2,7 @@ import { Box, Center, ChakraProvider, Theme } from "@chakra-ui/react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
-import { deepMerge } from "@/utils/objectUtils";
+import { deepMerge } from "@launchpad/shared";
 import { blockRegistry } from "@/services/registryService";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -82,8 +82,8 @@ export default function Preview({ setSelectedBlockId }) {
             strategy={verticalListSortingStrategy}
           >
             {blocks.map(({ id, type, config }) => {
-              const Component = blockRegistry[type].Component;
-              const { defaultConfig } = blockRegistry[type].meta;
+              const Component = blockRegistry.get(type).Component;
+              const { defaultConfig } = blockRegistry.get(type).meta;
               const mergedConfig = deepMerge(defaultConfig, config);
 
               return (
@@ -104,7 +104,7 @@ export default function Preview({ setSelectedBlockId }) {
         {draggedBlockId &&
           (() => {
             const draggedBlock = blocks.find((block) => block.id === draggedBlockId);
-            const icon = blockRegistry[draggedBlock.type].meta.icon;
+            const icon = blockRegistry.get(draggedBlock.type).meta.icon;
             return (
               <Box h="fit-content" w="fit-content">
                 {icon}

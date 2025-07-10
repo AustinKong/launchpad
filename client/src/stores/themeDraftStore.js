@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { deepMerge } from "@/utils/objectUtils";
+import { deepMerge } from "@launchpad/shared";
 
 const useThemeDraftStore = create((set) => ({
   themeEdits: {},

@@ -15,5 +15,5 @@
  * statusMapper(500); // 'Unknown'
  */
 export function createMapper(map, fallback = undefined) {
-  return (key) => (map.hasOwnProperty(key) ? map[key] : fallback);
+  return (key) => (Object.prototype.hasOwnProperty.call(map, key) ? map[key] : fallback);
 }
