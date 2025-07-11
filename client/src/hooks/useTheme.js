@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useParams } from "react-router";
 
 import { useCard } from "./useCard";
-import { useFontLoader } from "./useFontLoader";
+import { useFontLoader } from "./utils/useFontLoader";
 
 import { fetchTheme, saveTheme as saveThemeService } from "@/services/theme";
 import { useThemeEdits, useThemeEditActions } from "@/stores/themeDraftStore";

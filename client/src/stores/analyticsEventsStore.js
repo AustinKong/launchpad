@@ -25,4 +25,5 @@ const useAnalyticsEventsStore = create((set) => ({
 }));
 
 export const useAnalyticsEvents = () => useAnalyticsEventsStore((state) => state.events);
-export const useAnalyticsEventActions = () => useAnalyticsEventsStore((state) => state.event);
+export const useAnalyticsEventActions = () =>
+  useAnalyticsEventsStore((state) => state.eventActions);

@@ -7,6 +7,7 @@ export async function createAnalyticsEvents({ cardId, events }) {
       data: events.map((event) => ({
         cardId,
         ...event,
+        eventType: event.eventType.toUpperCase(),
       })),
     });
 

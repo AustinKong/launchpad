@@ -71,15 +71,15 @@ export function useBlocks() {
   const isLoading = blocksIsLoading || cardIsLoading;
   const isError = blocksIsError || cardIsError;
 
-  const mergedBlocks = useMemo(
-    () =>
-      blockOrders?.map((blockId) => {
-        const block = blocks.find((b) => b.id === blockId);
-        const blockEdit = blockEdits[blockId] || {};
-        return deepMerge(block, blockEdit);
-      }),
-    [blocks, blockOrders, blockEdits],
-  );
+  const mergedBlocks = useMemo(() => {
+    if (!blocks || !blockOrders) return [];
+
+    return blockOrders.map((blockId) => {
+      const block = blocks.find((b) => b.id === blockId);
+      const blockEdit = blockEdits[blockId] || {};
+      return deepMerge(block, blockEdit);
+    });
+  }, [blocks, blockOrders, blockEdits]);
 
   return {
     blocks: mergedBlocks || [],

@@ -1,4 +1,4 @@
-import { Box, Center, ChakraProvider, Theme } from "@chakra-ui/react";
+import { Box, Center, ChakraProvider, Loader, Theme } from "@chakra-ui/react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
@@ -10,7 +10,7 @@ import { useBlocks } from "@/hooks/useBlocks";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function Preview({ setSelectedBlockId }) {
-  const { blocks, reorderBlocks } = useBlocks();
+  const { blocks, reorderBlocks, isLoading } = useBlocks();
   const { theme } = useTheme();
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
@@ -49,6 +49,14 @@ export default function Preview({ setSelectedBlockId }) {
     if (!over || active.id === over.id) return;
     reorderBlocks(active.id, over.id);
   };
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Loader />
+      </Center>
+    );
+  }
 
   return (
     <DndContext

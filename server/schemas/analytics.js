@@ -8,6 +8,7 @@ export const batchCreateAnalyticsEventsSchema = {
     events: z.array(
       z.object({
         eventType: z.enum(["page_view", "button_click"]),
+        createdAt: z.string().datetime("Invalid date format"),
         eventData: z.object({}).passthrough(),
       })
     ),

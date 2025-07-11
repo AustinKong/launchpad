@@ -1,11 +1,12 @@
-import { Collapsible, Heading, VStack, Text, Button } from "@chakra-ui/react";
+import { Collapsible, Heading, VStack, Text, Button, Center, Loader } from "@chakra-ui/react";
 import { blockRegistry, fieldRegistry } from "@/services/registry";
 import { deepMerge } from "@launchpad/shared";
 import { useBlocks } from "@/hooks/useBlocks";
 import { toaster } from "@/components/ui/toaster";
 
 export default function Editor({ selectedBlockId, setSelectedBlockId }) {
-  const { blocks, createBlock, editBlock, deleteBlock, saveBlocks, saveIsLoading } = useBlocks();
+  const { blocks, createBlock, editBlock, deleteBlock, saveBlocks, saveIsLoading, isLoading } =
+    useBlocks();
 
   function handleSave() {
     toaster.promise(saveBlocks(), {
@@ -17,6 +18,14 @@ export default function Editor({ selectedBlockId, setSelectedBlockId }) {
       },
       loading: { title: "Saving blocks..." },
     });
+  }
+
+  if (isLoading) {
+    return (
+      <Center h="100vh">
+        <Loader />
+      </Center>
+    );
   }
 
   if (!selectedBlockId) {
