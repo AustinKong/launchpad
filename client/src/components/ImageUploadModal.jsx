@@ -1,4 +1,4 @@
-import { uploadImage } from "@/services/uploadService";
+import { uploadImage } from "@/services/upload";
 import { Button, Dialog, FileUpload, Icon, Image, Portal, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";

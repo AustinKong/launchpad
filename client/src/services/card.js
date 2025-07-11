@@ -1,4 +1,4 @@
-import authFetch from "@/utils/authFetch";
+import { authFetch, beaconFetch } from "@/utils/fetchUtils";
 
 export async function fetchCards() {
   const response = await authFetch("/api/cards");
@@ -55,7 +55,7 @@ export async function createCard({ title, slug }) {
 
 export async function saveCardBlocks({ id, blockOrders, blockEdits }) {
   const response = await authFetch(`/api/cards/${id}/batch`, {
-    method: "PATCH",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -71,4 +71,13 @@ export async function saveCardBlocks({ id, blockOrders, blockEdits }) {
 
   const { card, blocks } = await response.json();
   return { card, blocks };
+}
+
+export async function saveCardBlocksWithBeacon({ id, blockOrders, blockEdits }) {
+  beaconFetch(`/api/cards/${id}/batch`, {
+    body: JSON.stringify({
+      blockOrders,
+      blockEdits,
+    }),
+  });
 }

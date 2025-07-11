@@ -59,7 +59,8 @@ router.post(
   })
 );
 
-router.patch(
+// Must be POST to accept beacon requests
+router.post(
   "/:cardId/batch",
   authenticate,
   validateRequest(batchUpdateCardBlockSchema),

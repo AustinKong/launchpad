@@ -1,9 +1,9 @@
 import Select from "@/components/Select";
 import { useDocuments } from "@/hooks/useDocuments";
-import { useModal } from "@/hooks/useModal";
-import { getAssistantResponse } from "@/services/assistantService";
-import { fetchCardBySlug } from "@/services/cardService";
-import { embedDocument, uploadDocuments } from "@/services/documentService";
+import { useModal } from "@/hooks/utils/useModal";
+import { getAssistantResponse } from "@/services/assistant";
+import { fetchCardBySlug } from "@/services/card";
+import { embedDocument, uploadDocuments } from "@/services/document";
 import {
   Box,
   Button,

@@ -1,8 +1,8 @@
-import { useModal } from "@/hooks/useModal";
-import { fetchBlocks } from "@/services/blockService";
-import { fetchCardBySlug } from "@/services/cardService";
-import { blockRegistry } from "@/services/registryService";
-import { fetchTheme } from "@/services/themeService";
+import { useModal } from "@/hooks/utils/useModal";
+import { fetchBlocks } from "@/services/block";
+import { fetchCardBySlug } from "@/services/card";
+import { blockRegistry } from "@/services/registry";
+import { fetchTheme } from "@/services/theme";
 import { deepMerge } from "@launchpad/shared";
 import {
   Center,

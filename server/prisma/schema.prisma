@@ -15,6 +15,11 @@ enum AuthMethod {
   GITHUB
 }
 
+enum AnalyticsEventType {
+  PAGE_VIEW // Can add source = QR | Link in json file
+  BUTTON_CLICK
+}
+
 model User {
   id                String     @id @default(uuid())
   createdAt         DateTime   @default(now())
@@ -35,12 +40,13 @@ model Card {
   slug        String   @unique
   blockOrders String[] @default([])
 
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
-  Theme     Theme?
-  Assistant Assistant?
-  Blocks    Block[]
-  Documents Document[]
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  Theme           Theme?
+  Assistant       Assistant?
+  Blocks          Block[]
+  Documents       Document[]
+  AnalyticsEvents AnalyticsEvent[]
 }
 
 model Theme {
@@ -90,4 +96,14 @@ model Embedding {
 
   documentId String
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model AnalyticsEvent {
+  id        String             @id @default(uuid())
+  createdAt DateTime           @default(now())
+  eventType AnalyticsEventType
+  eventData Json
+
+  cardId String
+  card   Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }

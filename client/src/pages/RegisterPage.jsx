@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PiGoogleLogoBold } from "react-icons/pi";
 import LabeledSeparator from "@/components/LabeledSeparator";
 import { useMutation } from "@tanstack/react-query";
-import { registerWithEmail } from "@/services/authService";
+import { registerWithEmail } from "@/services/auth";
 import { useNavigate } from "react-router";
 
 export default function RegisterPage() {

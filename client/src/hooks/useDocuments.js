@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 
 import { useCard } from "./useCard";
 
-import { fetchDocuments, embedDocument as embedDocumentService } from "@/services/documentService";
+import { fetchDocuments, embedDocument as embedDocumentService } from "@/services/document";
 
 export function useDocuments() {
   const { slug } = useParams();

@@ -1,5 +1,6 @@
-import { createMapper } from "@/utils/mappers";
 import { Text } from "@chakra-ui/react";
+
+import { createMapper } from "@/utils/mappers";
 
 export const meta = {
   type: "paragraph",

@@ -1,6 +1,7 @@
+import { Heading as ChakraHeading } from "@chakra-ui/react";
+
 import { useTheme } from "@/hooks/useTheme";
 import { createMapper } from "@/utils/mappers";
-import { Heading as ChakraHeading } from "@chakra-ui/react";
 
 export const meta = {
   type: "heading",

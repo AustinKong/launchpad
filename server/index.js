@@ -15,6 +15,7 @@ import cardsRouter from "#routers/cards.js";
 import documentsRouter from "#routers/documents.js";
 import themesRouter from "#routers/themes.js";
 import uploadsRouter from "#routers/uploads.js";
+import analyticsRouter from "#routers/analytics.js";
 
 const app = express();
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/cards/:cardId/assistant", assistantsRouter);
 app.use("/api/cards/:cardId/blocks", blocksRouter);
 app.use("/api/cards/:cardId/documents", documentsRouter);
 app.use("/api/cards/:cardId/theme", themesRouter);
+app.use("/api/cards/:cardId/analytics", analyticsRouter);
 
 app.use("/api/uploads", uploadsRouter);
 app.use("/uploads", express.static(path.join(__dirname, "storage", "uploads")));
