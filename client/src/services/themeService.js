@@ -1,4 +1,4 @@
-import authFetch from "@/utils/authFetch";
+import { authFetch } from "@/utils/fetchUtils";
 
 export async function fetchTheme(cardId) {
   const response = await fetch(`/api/cards/${cardId}/theme`);

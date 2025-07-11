@@ -12,7 +12,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { PiEmpty } from "react-icons/pi";
-import { useModal } from "@/hooks/useModal";
+import { useModal } from "@/hooks/utils/useModal";
 import { NavLink } from "react-router";
 import DecorativeBox from "@/components/DecorativeBox";
 import { useQuery } from "@tanstack/react-query";

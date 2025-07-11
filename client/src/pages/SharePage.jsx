@@ -1,4 +1,4 @@
-import { useModal } from "@/hooks/useModal";
+import { useModal } from "@/hooks/utils/useModal";
 import { fetchBlocks } from "@/services/blockService";
 import { fetchCardBySlug } from "@/services/cardService";
 import { blockRegistry } from "@/services/registryService";

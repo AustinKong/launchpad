@@ -1,4 +1,4 @@
-import authFetch from "@/utils/authFetch";
+import { authFetch } from "@/utils/fetchUtils";
 
 export async function uploadImage({ imageBlob, fileName }) {
   const formData = new FormData();

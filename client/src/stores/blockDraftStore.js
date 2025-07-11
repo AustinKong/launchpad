@@ -1,7 +1,7 @@
 import { arrayMove } from "@dnd-kit/sortable";
-import { create } from "zustand";
 import { deepMerge } from "@launchpad/shared";
 import { v4 as uuidv4 } from "uuid";
+import { create } from "zustand";
 
 const useBlockDraftStore = create((set) => ({
   blockEdits: {},

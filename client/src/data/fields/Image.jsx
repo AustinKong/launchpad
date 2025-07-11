@@ -1,6 +1,6 @@
 import DecorativeBox from "@/components/DecorativeBox";
 import ImageUploadModal from "@/components/ImageUploadModal";
-import { useModal } from "@/hooks/useModal";
+import { useModal } from "@/hooks/utils/useModal";
 import { Image as ChakraImage, Field, Box } from "@chakra-ui/react";
 
 export const meta = {

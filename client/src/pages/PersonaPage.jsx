@@ -1,6 +1,6 @@
 import Select from "@/components/Select";
 import { useDocuments } from "@/hooks/useDocuments";
-import { useModal } from "@/hooks/useModal";
+import { useModal } from "@/hooks/utils/useModal";
 import { getAssistantResponse } from "@/services/assistantService";
 import { fetchCardBySlug } from "@/services/cardService";
 import { embedDocument, uploadDocuments } from "@/services/documentService";
