@@ -35,6 +35,7 @@ app.use("/api/cards/:cardId/assistant", assistantsRouter);
 app.use("/api/cards/:cardId/blocks", blocksRouter);
 app.use("/api/cards/:cardId/documents", documentsRouter);
 app.use("/api/cards/:cardId/theme", themesRouter);
+app.use("/api/cards/:cardId/analytics", cardsRouter);
 
 app.use("/api/uploads", uploadsRouter);
 app.use("/uploads", express.static(path.join(__dirname, "storage", "uploads")));
