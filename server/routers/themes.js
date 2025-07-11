@@ -19,7 +19,8 @@ router.get(
   })
 );
 
-router.patch(
+// Must be POST to accept beacon requests
+router.post(
   "/",
   authenticate,
   validateRequest(updateThemeSchema),

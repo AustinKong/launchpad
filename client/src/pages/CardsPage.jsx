@@ -1,5 +1,5 @@
 import CreateCardModal from "@/features/cardsPage/CreateCardModal";
-import { fetchCards } from "@/services/cardService";
+import { fetchCards } from "@/services/card";
 import {
   ButtonGroup,
   Button,

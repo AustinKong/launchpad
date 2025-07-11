@@ -1,4 +1,4 @@
-import { authFetch } from "@/utils/fetchUtils";
+import { authFetch, beaconFetch } from "@/utils/fetchUtils";
 
 export async function fetchTheme(cardId) {
   const response = await fetch(`/api/cards/${cardId}/theme`);
@@ -13,7 +13,7 @@ export async function fetchTheme(cardId) {
 
 export async function saveTheme({ cardId, themeEdits }) {
   const response = await authFetch(`/api/cards/${cardId}/theme`, {
-    method: "PATCH",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -26,4 +26,10 @@ export async function saveTheme({ cardId, themeEdits }) {
 
   const json = await response.json();
   return json.theme;
+}
+
+export function saveThemeWithBeacon({ cardId, themeEdits }) {
+  beaconFetch(`/api/cards/${cardId}/theme`, {
+    body: JSON.stringify({ themeEdits }),
+  });
 }

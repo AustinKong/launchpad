@@ -3,7 +3,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { useState } from "react";
 import { PiGoogleLogoBold } from "react-icons/pi";
 import LabeledSeparator from "@/components/LabeledSeparator";
-import { login } from "@/services/authService";
+import { login } from "@/services/auth";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 

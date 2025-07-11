@@ -1,4 +1,4 @@
-import { createCard } from "@/services/cardService";
+import { createCard } from "@/services/card";
 import { Dialog, Portal, Field, Input, InputGroup, Button, VStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { fetchCardById, fetchCardBySlug } from "@/services/cardService";
+import { fetchCardById, fetchCardBySlug } from "@/services/card";
 
 export function useCard({ slug = null, id = null }) {
   if (!slug && !id) {

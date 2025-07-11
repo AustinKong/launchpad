@@ -5,8 +5,8 @@ import { useParams } from "react-router";
 
 import { useCard } from "./useCard";
 
-import { fetchBlocks } from "@/services/blockService";
-import { saveCardBlocks } from "@/services/cardService";
+import { fetchBlocks } from "@/services/block";
+import { saveCardBlocks } from "@/services/card";
 import {
   useBlockEditActions,
   useBlockEdits,

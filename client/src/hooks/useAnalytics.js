@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 
 import { useCard } from "@/hooks/useCard";
 import { useInterval } from "@/hooks/utils/useInterval";
-import { sendAnalyticsEvents, sendAnalyticsEventsWithBeacon } from "@/services/analyticsService";
+import { sendAnalyticsEvents, sendAnalyticsEventsWithBeacon } from "@/services/analytics";
 import { useAnalyticsEventActions, useAnalyticsEvents } from "@/stores/analyticsEventsStore";
 
 export function useAnalytics() {

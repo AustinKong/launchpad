@@ -54,7 +54,7 @@ export async function authFetch(url, options = {}) {
  * fire-and-forget analytics or logging during page unload.
  *
  * @param {string} url - The URL to send the beacon to.
- * @param {{ body?: any }} [options={}] - Options object with an optional `body` property.
+ * @param {{ body?: any }} [options={}] - Options object with an optional `body` property (stringified).
  * @returns {boolean} True if the browser successfully queued the data for sending, false otherwise.
  * @throws {Error} If `sendBeacon` is not supported by the browser.
  */
@@ -63,8 +63,7 @@ export function beaconFetch(url, options = {}) {
     throw new Error("sendBeacon is not supported in this browser");
   }
 
-  const payload = JSON.stringify(options.body);
-  const blob = new Blob([payload], { type: "application/json" });
+  const blob = new Blob([options.body], { type: "application/json" });
 
   return navigator.sendBeacon(url, blob);
 }

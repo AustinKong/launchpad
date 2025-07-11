@@ -3,7 +3,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { fixedCursorSnapCollisionDetection, useSensors } from "@/utils/dragAndDrop";
 import { deepMerge } from "@launchpad/shared";
-import { blockRegistry } from "@/services/registryService";
+import { blockRegistry } from "@/services/registry";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBlocks } from "@/hooks/useBlocks";

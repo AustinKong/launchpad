@@ -1,5 +1,5 @@
 import { Button, Collapsible, VStack } from "@chakra-ui/react";
-import { fieldRegistry } from "@/services/registryService";
+import { fieldRegistry } from "@/services/registry";
 import { useTheme } from "@/hooks/useTheme";
 
 const fields = [

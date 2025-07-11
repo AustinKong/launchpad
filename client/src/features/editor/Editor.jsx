@@ -1,5 +1,5 @@
 import { Collapsible, Heading, VStack, Text, Button } from "@chakra-ui/react";
-import { blockRegistry, fieldRegistry } from "@/services/registryService";
+import { blockRegistry, fieldRegistry } from "@/services/registry";
 import { deepMerge } from "@launchpad/shared";
 import { useBlocks } from "@/hooks/useBlocks";
 import { toaster } from "@/components/ui/toaster";

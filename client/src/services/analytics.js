@@ -1,3 +1,5 @@
+import { beaconFetch } from "@/utils/fetchUtils";
+
 export async function sendAnalyticsEvents({ cardId, events }) {
   const response = await fetch(`/api/cards/${cardId}/analytics/batch`, {
     method: "POST",
@@ -16,7 +18,7 @@ export async function sendAnalyticsEvents({ cardId, events }) {
 }
 
 export function sendAnalyticsEventsWithBeacon({ cardId, events }) {
-  const payload = JSON.stringify({ events });
-  const blob = new Blob([payload], { type: "application/json" });
-  navigator.sendBeacon(`/api/cards/${cardId}/analytics/batch`, blob);
+  beaconFetch(`/api/cards/${cardId}/analytics/batch`, {
+    body: JSON.stringify({ events }),
+  });
 }
