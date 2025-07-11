@@ -13,7 +13,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { cardId } = req.params;
     const { events } = req.body;
-    const createdEvents = createAnalyticsEvents({ cardId, events });
+    const createdEvents = await createAnalyticsEvents({ cardId, events });
 
     res.status(201).json({ events: createdEvents });
   })
