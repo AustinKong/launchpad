@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, useToken } from "@chakra-ui/react";
 
 export default function DecorativeBox({
   w = "100%",
@@ -6,19 +6,21 @@ export default function DecorativeBox({
   borderColor = "border",
   ...props
 }) {
+  const [fgSubtle] = useToken("colors", ["fg.subtle"]);
+
   return (
     <Box
       width={w}
       border="thin solid"
       borderColor={borderColor}
       height={h}
-      background="repeating-linear-gradient(
+      background={`repeating-linear-gradient(
         -45deg,
-        rgba(62, 60, 68, 0.8),
-        rgba(62, 60, 68, 0.8) 5px,
-        transparent 5px,
-        transparent 10px
-      )"
+        ${fgSubtle},
+        ${fgSubtle} 10px,
+        transparent 10px,
+        transparent 20px
+      )`}
       {...props}
     />
   );

@@ -1,9 +1,3 @@
-import Select from "@/components/Select";
-import { useDocuments } from "@/hooks/useDocuments";
-import { useModal } from "@/hooks/utils/useModal";
-import { getAssistantResponse } from "@/services/assistant";
-import { fetchCardBySlug } from "@/services/card";
-import { embedDocument, uploadDocuments } from "@/services/document";
 import {
   Box,
   Button,
@@ -24,6 +18,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { PiPaperPlane } from "react-icons/pi";
 import { useParams } from "react-router";
+
+import Select from "@/components/ui/Select";
+import { useDocuments } from "@/hooks/useDocuments";
+import { useModal } from "@/hooks/utils/useModal";
+import { getAssistantResponse } from "@/services/assistant";
+import { fetchCardBySlug } from "@/services/card";
+import { embedDocument, uploadDocuments } from "@/services/document";
 
 export default function PersonaPage() {
   const { isOpen, onOpenChange, open, close } = useModal();

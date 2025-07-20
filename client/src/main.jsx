@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router";
 
 import "@/index.css";
 import App from "@/App.jsx";
-import { Provider as ChakraProvider } from "@/components/ui/provider";
+import { Provider as ChakraProvider } from "@/components/chakra/provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router";
 
 import AuthLayout from "@/components/layouts/AuthLayout";
-import DashboardLayout from "@/components/layouts/DashboardLayout";
+import HomeLayout from "@/components/layouts/home/HomeLayout";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/Toaster";
 import CardsPage from "@/pages/CardsPage";
 import EditorPage from "@/pages/EditorPage";
 import LoginPage from "@/pages/LoginPage";
@@ -16,7 +16,7 @@ function App() {
   return (
     <>
       <Routes>
-        <Route element={<DashboardLayout />}>
+        <Route element={<HomeLayout />}>
           <Route path="cards" element={<CardsPage />} />
         </Route>
 

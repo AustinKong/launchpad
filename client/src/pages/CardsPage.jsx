@@ -14,8 +14,9 @@ import {
 import { PiEmpty } from "react-icons/pi";
 import { useModal } from "@/hooks/utils/useModal";
 import { NavLink } from "react-router";
-import DecorativeBox from "@/components/DecorativeBox";
+import DecorativeBox from "@/components/ui/DecorativeBox";
 import { useQuery } from "@tanstack/react-query";
+import HomeHeaderActions from "@/components/layouts/home/HomeHeaderActions";
 
 export default function CardsPage() {
   const { data: cards, isPending } = useQuery({
@@ -38,6 +39,11 @@ export default function CardsPage() {
 
   return (
     <>
+      <HomeHeaderActions>
+        <Button onClick={openCreateCardModal} size="sm">
+          Create Card
+        </Button>
+      </HomeHeaderActions>
       <CreateCardModal
         isOpen={createCardModalIsOpen}
         onClose={() => {
@@ -65,11 +71,6 @@ export default function CardsPage() {
         </EmptyState.Root>
       ) : (
         <>
-          <HStack>
-            <Button onClick={openCreateCardModal} size="sm">
-              Create Card
-            </Button>
-          </HStack>
           <Wrap gap="4" mt="8">
             {cards.map((card, index) => (
               <VStack key={index} w="3xs">
