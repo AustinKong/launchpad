@@ -5,7 +5,7 @@ import { NavLink as RouterLink } from "react-router";
 import LogoWithText from "@/components/ui/LogoWithText";
 import { useCards } from "@/hooks/useCards";
 
-export default function HomeSidebar() {
+export default function Sidebar() {
   const { cards, isLoading, isError } = useCards();
 
   return (

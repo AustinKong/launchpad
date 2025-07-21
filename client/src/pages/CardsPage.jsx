@@ -16,7 +16,7 @@ import { useModal } from "@/hooks/utils/useModal";
 import { NavLink } from "react-router";
 import DecorativeBox from "@/components/ui/DecorativeBox";
 import { useQuery } from "@tanstack/react-query";
-import HomeHeaderActions from "@/components/layouts/home/HomeHeaderActions";
+import HeaderActions from "@/components/layouts/home-layout/HeaderActions";
 
 export default function CardsPage() {
   const { data: cards, isPending } = useQuery({
@@ -39,11 +39,11 @@ export default function CardsPage() {
 
   return (
     <>
-      <HomeHeaderActions>
+      <HeaderActions>
         <Button onClick={openCreateCardModal} size="sm">
           Create Card
         </Button>
-      </HomeHeaderActions>
+      </HeaderActions>
       <CreateCardModal
         isOpen={createCardModalIsOpen}
         onClose={() => {

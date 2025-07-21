@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 const HeaderContext = createContext(null);
 
-export function useHomeHeader() {
+export function useHeader() {
   const context = useContext(HeaderContext);
   if (!context) {
     throw new Error("useHomeHeader must be used within a HomeHeaderProvider");
@@ -10,7 +10,7 @@ export function useHomeHeader() {
   return context;
 }
 
-export function HomeHeaderProvider({ children }) {
+export function HeaderProvider({ children }) {
   const [actions, setActions] = useState([]);
 
   return (

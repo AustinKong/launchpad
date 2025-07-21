@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router";
 
 import AuthLayout from "@/components/layouts/AuthLayout";
-import HomeLayout from "@/components/layouts/home/HomeLayout";
+import HomeLayout from "@/components/layouts/home-layout";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
 import { Toaster } from "@/components/ui/Toaster";
-import CardsPage from "@/pages/CardsPage";
+import CardsPage from "@/pages/cards-page";
 import EditorPage from "@/pages/EditorPage";
 import LoginPage from "@/pages/LoginPage";
 import PersonaPage from "@/pages/PersonaPage";
