@@ -2,7 +2,7 @@ import { Collapsible, Heading, VStack, Text, Button, Center, Loader } from "@cha
 import { blockRegistry, fieldRegistry } from "@/services/registry";
 import { deepMerge } from "@launchpad/shared";
 import { useBlocks } from "@/hooks/useBlocks";
-import { toaster } from "@/components/ui/Toaster";
+import { toaster } from "@/utils/ui/toaster";
 
 export default function Editor({ selectedBlockId, setSelectedBlockId }) {
   const { blocks, createBlock, editBlock, deleteBlock, saveBlocks, saveIsLoading, isLoading } =

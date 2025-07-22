@@ -2,9 +2,11 @@ import { IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuEllipsisVertical } from "react-icons/lu";
 import { PiCopy, PiPen, PiShare, PiStar, PiTrash } from "react-icons/pi";
 
+import { confirmation } from "@/utils/ui/confirmation";
+
 export default function CardActionMenu() {
   // TODO: Create a confirmation dialog singleton that mimics confirm api from browser
-  const handleSelect = ({ value }) => {
+  async function handleSelect({ value }) {
     switch (value) {
       case "star":
         break;
@@ -18,10 +20,21 @@ export default function CardActionMenu() {
         // Handle share action
         break;
       case "delete":
+        if (
+          await confirmation.create({
+            title: "Delete Card",
+            description: "Are you sure you want to delete this card? This action cannot be undone.",
+            confirmLabel: "Delete",
+            cancelLabel: "Cancel",
+            targetText: "My Silly Card ID",
+          })
+        ) {
+          console.log("Card deleted");
+        }
         // Handle delete action
         break;
     }
-  };
+  }
 
   return (
     <Menu.Root onSelect={handleSelect}>

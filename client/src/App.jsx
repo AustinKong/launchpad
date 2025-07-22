@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import HomeLayout from "@/components/layouts/home-layout";
 import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
-import { Toaster } from "@/components/ui/Toaster";
 import CardsPage from "@/pages/cards-page";
 import EditorPage from "@/pages/EditorPage";
 import LoginPage from "@/pages/LoginPage";
@@ -11,6 +10,8 @@ import PersonaPage from "@/pages/PersonaPage";
 import RegisterPage from "@/pages/RegisterPage";
 import SharePage from "@/pages/SharePage";
 import ThemeEditorPage from "@/pages/ThemeEditorPage";
+import { Confirmation } from "@/utils/ui/confirmation";
+import { Toaster } from "@/utils/ui/toaster";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="share/:slug" element={<SharePage />} />
       </Routes>
       <Toaster />
+      <Confirmation />
     </>
   );
 }

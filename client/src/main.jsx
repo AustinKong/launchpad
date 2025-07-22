@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router";
 import "@/index.css";
 import App from "@/App.jsx";
 import { Provider as ChakraProvider } from "@/components/chakra/provider";
-import { toaster } from "@/components/ui/Toaster";
+import { toaster } from "@/utils/ui/toaster";
 
 const queryClient = new QueryClient({
   defaultOptions: {
