@@ -1,10 +1,10 @@
 import { Center, HStack, Loader, VStack, Box, Heading, Button } from "@chakra-ui/react";
+import { NavLink } from "react-router";
 
 import Card from "./Card";
 
 import { HeaderActions } from "@/components/layouts/home-layout";
 import { useCards } from "@/hooks/useCards";
-import { NavLink } from "react-router";
 
 export default function CardsPage() {
   const { cards: starredCards, isLoading: starredIsLoading } = useCards("starred");

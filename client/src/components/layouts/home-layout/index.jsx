@@ -21,4 +21,4 @@ export default function HomeLayout() {
   );
 }
 
-export { default as HeaderActions } from "./HeaderActions";
+export { default as HeaderActions } from "./HeaderActionsAPI";

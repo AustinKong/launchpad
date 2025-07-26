@@ -14,7 +14,7 @@ export default function Header() {
       <Breadcrumb separator={<PiCaretRight />} size="lg" />
       <Spacer />
       <ColorModeButton />
-      <HStack>{actions}</HStack>
+      {actions}
     </HStack>
   );
 }

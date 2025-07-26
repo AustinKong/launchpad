@@ -16,7 +16,7 @@ import { useModal } from "@/hooks/utils/useModal";
 import { NavLink } from "react-router";
 import DecorativeBox from "@/components/ui/DecorativeBox";
 import { useQuery } from "@tanstack/react-query";
-import HeaderActions from "@/components/layouts/home-layout/HeaderActions";
+import HeaderActions from "@/components/layouts/home-layout/HeaderActionsAPI";
 
 export default function CardsPage() {
   const { data: cards, isPending } = useQuery({

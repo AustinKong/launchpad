@@ -1,10 +1,10 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 
 import AuthLayout from "@/components/layouts/AuthLayout";
+import EditorLayout from "@/components/layouts/editor-layout";
 import HomeLayout from "@/components/layouts/home-layout";
-import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
+import BlockEditorPage from "@/pages/block-editor-page";
 import CardsPage from "@/pages/cards-page";
-import EditorPage from "@/pages/EditorPage";
 import LoginPage from "@/pages/LoginPage";
 import NewCardPage from "@/pages/new-card-page";
 import PersonaPage from "@/pages/PersonaPage";
@@ -28,8 +28,9 @@ function App() {
           <Route path="login" element={<LoginPage />} />
         </Route>
 
-        <Route path="cards/:slug" element={<WorkspaceLayout />}>
-          <Route path="edit" element={<EditorPage />} />
+        <Route path="cards/:slug" element={<EditorLayout />}>
+          <Route index element={<Navigate to="blocks" replace />} />
+          <Route path="blocks" element={<BlockEditorPage />} />
           <Route path="theme" element={<ThemeEditorPage />} />
           <Route path="persona" element={<PersonaPage />} />
         </Route>
