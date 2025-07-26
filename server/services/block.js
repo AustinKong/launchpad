@@ -30,6 +30,26 @@ export async function createBlock({ cardId, id, type, config }, tx = null) {
   }
 }
 
+export async function createBlocks({ cardId, blocks }, tx = null) {
+  const client = tx || prisma;
+  try {
+    const createdBlocks = await client.block.createMany({
+      data: blocks.map((block) => ({
+        type: block.type,
+        config: block.config,
+        cardId,
+      })),
+    });
+
+    return createdBlocks;
+  } catch (err) {
+    if (err?.code === "P2002") {
+      throw new ApiError(400, "One or more blocks already exist");
+    }
+    throw new ApiError(500, "Internal server error", err.message);
+  }
+}
+
 export async function deleteBlock(id, tx = null) {
   const client = tx || prisma;
   try {

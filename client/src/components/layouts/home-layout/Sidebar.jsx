@@ -6,11 +6,11 @@ import LogoWithText from "@/components/ui/LogoWithText";
 import { useCards } from "@/hooks/useCards";
 
 export default function Sidebar() {
-  const { cards, isLoading, isError } = useCards();
+  const { cards: starredCards, isLoading } = useCards("starred");
 
   return (
     <VStack
-      w="64"
+      w="xs"
       as="aside"
       h="full"
       alignItems="stretch"
@@ -28,11 +28,10 @@ export default function Sidebar() {
             { label: "Archived", path: "/archived", icon: <PiArchive /> },
           ]}
         />
-        {/* TODO: Only render starred cards */}
-        {!isLoading && !isError && cards.length > 0 && (
+        {!isLoading && starredCards.length > 0 && (
           <NavGroup
             title="Starred"
-            links={cards.map((card) => ({
+            links={starredCards.map((card) => ({
               label: card.title,
               path: `/cards/${card.slug}`,
               icon: <PiStar />,

@@ -17,7 +17,8 @@ import DecorativeBox from "@/components/ui/DecorativeBox";
 
 // TODO: Replace createdAt with editedAt
 export default function Card({ card }) {
-  const { title, createdAt, slug } = card;
+  const { title, updatedAt, slug, user } = card;
+
   return (
     <LinkBox
       as={ChakraCard.Root}
@@ -37,18 +38,18 @@ export default function Card({ card }) {
                 {title}
               </ChakraCard.Title>
               <ChakraCard.Description textStyle="xs">
-                Created {timeSinceNow(createdAt)} ago
+                {"Private"} • Edited {timeSinceNow(updatedAt)} ago
               </ChakraCard.Description>
             </Box>
           </LinkOverlay>
           <Spacer />
           <Avatar.Root size="sm">
-            <Avatar.Fallback>AB</Avatar.Fallback>
+            <Avatar.Fallback>{user.id.slice(0, 2)}</Avatar.Fallback>
           </Avatar.Root>
         </HStack>
       </ChakraCard.Body>
       <Float offsetX="5" offsetY="5">
-        <CardActionMenu />
+        <CardActionMenu card={card} />
       </Float>
     </LinkBox>
   );

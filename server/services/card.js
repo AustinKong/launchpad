@@ -1,21 +1,80 @@
 import { getAddedElements, getRemovedElements } from "@launchpad/shared";
 
 import prisma from "#prisma/prismaClient.js";
-import { createAssistant } from "#services/assistant.js";
-import { createBlock, deleteBlock, updateBlock } from "#services/block.js";
-import { createTheme } from "#services/theme.js";
+import { createAssistant, getAssistantByCardId } from "#services/assistant.js";
+import {
+  createBlock,
+  createBlocks,
+  deleteBlock,
+  getBlocksByCardId,
+  updateBlock,
+} from "#services/block.js";
+import { createTheme, getThemeByCardId } from "#services/theme.js";
 import ApiError from "#utils/ApiError.js";
 
-export async function getCardsByUserId(userId) {
-  const cards = await prisma.card.findMany({
-    where: { userId },
+export async function getStarredCards(userId) {
+  const cards = await prisma.card.findManyWithUserMeta({
+    userId,
+    where: {
+      starredBy: {
+        some: {
+          id: userId,
+        },
+      },
+      isArchived: false,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return cards;
+}
+
+export async function getOwnedCards(userId) {
+  const cards = await prisma.card.findManyWithUserMeta({
+    userId,
+    where: {
+      userId,
+      isArchived: false,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return cards;
+}
+
+export async function getLibraryCards(userId) {
+  const cards = await prisma.card.findManyWithUserMeta({
+    userId,
+    where: {
+      visibility: "PUBLIC",
+      isArchived: false,
+    },
+  });
+
+  return cards;
+}
+
+export async function getArchivedCards(userId) {
+  const cards = await prisma.card.findManyWithUserMeta({
+    userId,
+    where: {
+      userId,
+      isArchived: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   return cards;
 }
 
 export async function getCardById(id) {
-  const card = await prisma.card.findUnique({
+  const card = await prisma.card.findUniqueWithUser({
     where: { id },
   });
 
@@ -27,7 +86,7 @@ export async function getCardById(id) {
 }
 
 export async function getCardBySlug(slug) {
-  const card = await prisma.card.findUnique({
+  const card = await prisma.card.findUniqueWithUser({
     where: { slug },
   });
 
@@ -38,7 +97,10 @@ export async function getCardBySlug(slug) {
   return card;
 }
 
-export async function createCard({ userId, title, slug }) {
+export async function createCard({ userId, title, slug, templateId }) {
+  // Ensure template exists
+  await getCardById(templateId);
+
   try {
     const result = await prisma.$transaction(async (tx) => {
       const card = await tx.card.create({
@@ -49,8 +111,28 @@ export async function createCard({ userId, title, slug }) {
         },
       });
 
-      await createTheme({ cardId: card.id }, tx);
-      await createAssistant({ cardId: card.id }, tx);
+      const [templateTheme, templateAssistant, templateBlocks] =
+        await Promise.all([
+          getThemeByCardId(templateId),
+          getAssistantByCardId(templateId),
+          getBlocksByCardId(templateId),
+        ]);
+
+      await createTheme({ cardId: card.id, config: templateTheme.config }, tx);
+      await createAssistant(
+        { cardId: card.id, config: templateAssistant.config },
+        tx
+      );
+      await createBlocks(
+        {
+          cardId: card.id,
+          blocks: templateBlocks.map((block) => ({
+            type: block.type,
+            config: block.config,
+          })),
+        },
+        tx
+      );
 
       return card;
     });

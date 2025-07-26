@@ -4,13 +4,8 @@ import { useEffect } from "react";
 import { fetchCardById, fetchCardBySlug } from "@/services/card";
 
 export function useCard({ slug = null, id = null }) {
-  if (!slug && !id) {
-    throw new Error("Slug or ID must be provided to useCard hook");
-  }
-
   const queryClient = useQueryClient();
-  // Namespace the keys to avoid conflicts
-  const queryKey = ["card", id ? `id:${id}` : `slug:${slug}`];
+  const queryKey = id || slug ? ["card", id ? `id:${id}` : `slug:${slug}`] : null;
 
   const {
     data: card,
@@ -23,8 +18,15 @@ export function useCard({ slug = null, id = null }) {
       if (slug) return fetchCardBySlug(slug);
     },
     initialData: () => {
-      const cards = queryClient.getQueryData(["cards"]) || [];
-      return cards.find((card) => card.slug === slug || card.id === id);
+      if (!id && !slug) return undefined;
+
+      const views = ["starred", "owned", "archived", "library"];
+      for (const view of views) {
+        const cached = queryClient.getQueryData(["cards", view]);
+        if (!cached) continue;
+        const match = cached.find((card) => card.id === id || card.slug === slug);
+        if (match) return match;
+      }
     },
     enabled: !!slug || !!id,
   });

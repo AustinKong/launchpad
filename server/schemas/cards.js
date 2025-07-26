@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const getCardsSchema = {
+  query: z.object({
+    view: z.enum(["starred", "owned", "library", "archived"]),
+  }),
+};
+
 export const getCardByIdentifierSchema = {
   params: z.object({
     identifier: z.union(
@@ -22,6 +28,7 @@ export const createCardSchema = {
         message:
           "Card URL must be lowercase and can only contain letters, numbers, and hyphens",
       }),
+    templateId: z.string().uuid("Invalid template ID format"),
   }),
 };
 

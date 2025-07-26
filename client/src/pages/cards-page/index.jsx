@@ -4,11 +4,13 @@ import Card from "./Card";
 
 import { HeaderActions } from "@/components/layouts/home-layout";
 import { useCards } from "@/hooks/useCards";
+import { NavLink } from "react-router";
 
 export default function CardsPage() {
-  const { cards, isLoading } = useCards();
+  const { cards: starredCards, isLoading: starredIsLoading } = useCards("starred");
+  const { cards: ownedCards, isLoading: ownedIsLoading } = useCards("owned");
 
-  if (isLoading) {
+  if (starredIsLoading || ownedIsLoading) {
     return (
       <Center>
         <Loader />
@@ -19,14 +21,13 @@ export default function CardsPage() {
   return (
     <>
       <HeaderActions>
-        <Button size="sm" colorPalette="blue">
-          New Card
+        <Button size="sm" colorPalette="blue" asChild>
+          <NavLink to="/cards/new">New Card</NavLink>
         </Button>
       </HeaderActions>
       <VStack p="4" gap="4">
-        <CardsGroup title="Starred" cards={cards} />
-        <CardsGroup title="Recent" cards={cards} />
-        <CardsGroup title="All" cards={cards} />
+        <CardsGroup title="Starred" cards={starredCards} />
+        <CardsGroup title="Your Cards" cards={ownedCards} />
       </VStack>
     </>
   );

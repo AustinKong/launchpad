@@ -1,10 +1,10 @@
 import { authFetch, beaconFetch } from "@/utils/fetchUtils";
 
-export async function fetchCards() {
-  const response = await authFetch("/api/cards");
+export async function fetchCardsByView(view) {
+  const response = await authFetch(`/api/cards?view=${view}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch cards");
+    throw new Error(`Failed to fetch cards with view ${view}`);
   }
 
   const json = await response.json();
@@ -33,7 +33,7 @@ export async function fetchCardBySlug(slug) {
   return json.card;
 }
 
-export async function createCard({ title, slug }) {
+export async function createCardWithTemplate({ title, slug, templateId }) {
   const response = await authFetch("/api/cards", {
     method: "POST",
     headers: {
@@ -42,6 +42,7 @@ export async function createCard({ title, slug }) {
     body: JSON.stringify({
       title,
       slug,
+      templateId,
     }),
   });
 
@@ -80,4 +81,30 @@ export async function saveCardBlocksWithBeacon({ id, blockOrders, blockEdits }) 
       blockEdits,
     }),
   });
+}
+
+export async function starCard(cardId) {
+  const response = await authFetch(`/api/cards/${cardId}/star`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to star card");
+  }
+
+  const json = await response.json();
+  return json.card;
+}
+
+export async function unstarCard(cardId) {
+  const response = await authFetch(`/api/cards/${cardId}/star`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to unstar card");
+  }
+
+  const json = await response.json();
+  return json.card;
 }

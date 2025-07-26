@@ -20,28 +20,40 @@ enum AnalyticsEventType {
   BUTTON_CLICK
 }
 
+enum CardVisibility {
+  PUBLIC
+  UNLISTED
+  PRIVATE
+}
+
 model User {
   id                String     @id @default(uuid())
   createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
   authMethod        AuthMethod
   email             String     @unique
   passwordHash      String?
   providerAccountId String?
 
-  cards Card[] @relation()
+  cards        Card[] @relation()
+  starredCards Card[] @relation("StarredCards")
 
   @@unique([authMethod, providerAccountId])
 }
 
 model Card {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
+  id          String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  isArchived  Boolean        @default(false)
   title       String
-  slug        String   @unique
-  blockOrders String[] @default([])
+  slug        String         @unique
+  visibility  CardVisibility @default(PRIVATE)
+  blockOrders String[]       @default([])
 
   userId          String
   user            User             @relation(fields: [userId], references: [id])
+  starredBy       User[]           @relation("StarredCards")
   Theme           Theme?
   Assistant       Assistant?
   Blocks          Block[]
@@ -51,6 +63,7 @@ model Card {
 
 model Theme {
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   config    Json
 
   cardId String @id
@@ -60,6 +73,7 @@ model Theme {
 model Block {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   type      String
   config    Json
 
@@ -71,6 +85,7 @@ model Block {
 
 model Assistant {
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   config    Json
 
   cardId String @id
@@ -80,6 +95,7 @@ model Assistant {
 model Document {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   fileName  String
   filePath  String
 
@@ -91,6 +107,7 @@ model Document {
 model Embedding {
   id        String                      @id @default(uuid())
   createdAt DateTime                    @default(now())
+  updatedAt DateTime                    @updatedAt
   vector    Unsupported("vector(3072)")
   textChunk String
 
@@ -101,6 +118,7 @@ model Embedding {
 model AnalyticsEvent {
   id        String             @id @default(uuid())
   createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
   eventType AnalyticsEventType
   eventData Json
 

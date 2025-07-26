@@ -6,13 +6,17 @@ import {
   batchUpdateCardBlockSchema,
   createCardSchema,
   getCardByIdentifierSchema,
+  getCardsSchema,
 } from "#schemas/cards.js";
 import {
-  getCardsByUserId,
   getCardById,
   createCard,
   batchUpdateCardBlocks,
   getCardBySlug,
+  getLibraryCards,
+  getArchivedCards,
+  getStarredCards,
+  getOwnedCards,
 } from "#services/card.js";
 import asyncHandler from "#utils/asyncHandler.js";
 
@@ -21,9 +25,19 @@ const router = express.Router();
 router.get(
   "/",
   authenticate,
+  validateRequest(getCardsSchema),
   asyncHandler(async (req, res) => {
-    const userId = req.user.id;
-    const cards = await getCardsByUserId(userId);
+    const userId = req.user.sub;
+    const { view } = req.query;
+
+    const viewHandlers = {
+      starred: () => getStarredCards(userId),
+      owned: () => getOwnedCards(userId),
+      archived: () => getArchivedCards(userId),
+      library: () => getLibraryCards(userId),
+    };
+
+    const cards = await viewHandlers[view]();
 
     res.status(200).json({ cards });
   })
@@ -51,9 +65,9 @@ router.post(
   validateRequest(createCardSchema),
   asyncHandler(async (req, res) => {
     const userId = req.user.sub;
-    const { title, slug } = req.body;
+    const { title, slug, templateId } = req.body;
 
-    const card = await createCard({ userId, title, slug });
+    const card = await createCard({ userId, title, slug, templateId });
 
     res.status(201).json({ card });
   })

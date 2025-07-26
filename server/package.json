@@ -42,5 +42,8 @@
     "#prisma/*": "./prisma/*",
     "#schemas/*": "./schemas/*",
     "#data/*": "./data/*"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

@@ -6,6 +6,7 @@ import WorkspaceLayout from "@/components/layouts/WorkspaceLayout";
 import CardsPage from "@/pages/cards-page";
 import EditorPage from "@/pages/EditorPage";
 import LoginPage from "@/pages/LoginPage";
+import NewCardPage from "@/pages/new-card-page";
 import PersonaPage from "@/pages/PersonaPage";
 import RegisterPage from "@/pages/RegisterPage";
 import SharePage from "@/pages/SharePage";
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route element={<HomeLayout />}>
           <Route path="cards" element={<CardsPage />} />
+          <Route path="/cards/new" element={<NewCardPage />} />
         </Route>
 
         <Route path="auth" element={<AuthLayout />}>
