@@ -4,6 +4,7 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 
 export const meta = {
   type: "button",
+  group: "Content",
   defaultConfig: {
     text: "Click on me!",
     url: "/",

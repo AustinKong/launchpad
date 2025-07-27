@@ -43,6 +43,13 @@ export const blockRegistry = {
       ..._blockRegistry[type],
     }));
   },
+  grouped() {
+    return Object.entries(_blockRegistry).reduce((acc, [type, { meta }]) => {
+      if (!acc[meta.group]) acc[meta.group] = [];
+      acc[meta.group].push({ type, ..._blockRegistry[type] });
+      return acc;
+    }, {});
+  },
 };
 
 export const fieldRegistry = {
@@ -57,5 +64,12 @@ export const fieldRegistry = {
       fieldType,
       ..._fieldRegistry[fieldType],
     }));
+  },
+  grouped() {
+    return Object.entries(_fieldRegistry).reduce((acc, [fieldType, { meta }]) => {
+      if (!acc[meta.group]) acc[meta.group] = [];
+      acc[meta.group].push({ fieldType, ..._fieldRegistry[fieldType] });
+      return acc;
+    }, {});
   },
 };

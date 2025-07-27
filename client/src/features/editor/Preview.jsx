@@ -15,48 +15,48 @@ export default function Preview({ setSelectedBlockId }) {
   const [draggedBlockId, setDraggedBlockId] = useState(null);
   const sensors = useSensors();
 
-  const cardRef = useRef();
-  const containerRef = useRef();
+  // const cardRef = useRef();
+  // const containerRef = useRef();
 
-  useEffect(() => {
-    const card = cardRef.current;
-    const container = containerRef.current;
+  // useEffect(() => {
+  //   const card = cardRef.current;
+  //   const container = containerRef.current;
 
-    function handleClickOutside(event) {
-      if (!card || !container) return;
+  //   function handleClickOutside(event) {
+  //     if (!card || !container) return;
 
-      const clickedInsideCard = card.contains(event.target);
-      const clickedInsideContainer = container.contains(event.target);
+  //     const clickedInsideCard = card.contains(event.target);
+  //     const clickedInsideContainer = container.contains(event.target);
 
-      if (!clickedInsideCard && clickedInsideContainer) {
-        setSelectedBlockId(null);
-      }
-    }
+  //     if (!clickedInsideCard && clickedInsideContainer) {
+  //       setSelectedBlockId(null);
+  //     }
+  //   }
 
-    container.addEventListener("mousedown", handleClickOutside);
-    return () => container.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  //   container.addEventListener("mousedown", handleClickOutside);
+  //   return () => container.removeEventListener("mousedown", handleClickOutside);
+  // }, []);
 
-  const handleDragStart = (event) => {
-    setDraggedBlockId(event.active.id);
-    setSelectedBlockId(event.active.id);
-  };
+  // const handleDragStart = (event) => {
+  //   setDraggedBlockId(event.active.id);
+  //   setSelectedBlockId(event.active.id);
+  // };
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    setDraggedBlockId(null);
+  // const handleDragEnd = (event) => {
+  //   const { active, over } = event;
+  //   setDraggedBlockId(null);
 
-    if (!over || active.id === over.id) return;
-    reorderBlocks(active.id, over.id);
-  };
+  //   if (!over || active.id === over.id) return;
+  //   reorderBlocks(active.id, over.id);
+  // };
 
-  if (isLoading) {
-    return (
-      <Center h="100vh">
-        <Loader />
-      </Center>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Center h="100vh">
+  //       <Loader />
+  //     </Center>
+  //   );
+  // }
 
   return (
     <DndContext

@@ -4,8 +4,10 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 
 import "@/index.css";
+
 import App from "@/App.jsx";
 import { Provider as ChakraProvider } from "@/components/chakra/provider";
+import { navigation, NavigationProvider } from "@/utils/ui/navigation";
 import { toaster } from "@/utils/ui/toaster";
 
 const queryClient = new QueryClient({
@@ -13,8 +15,13 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
-      staleTime: 1000 * 60, // 1 minute
+      staleTime: 1000 * 60,
       onError: (error) => {
+        if (error.response?.status === 401) {
+          // TODO: Add proper 401 page
+          navigation.replace("/auth/login");
+        }
+
         toaster.create({
           title: "Error",
           description: error.message || "An unexpected error occurred.",
@@ -38,9 +45,11 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ChakraProvider>
       <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
+        <NavigationProvider>
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
+        </NavigationProvider>
       </BrowserRouter>
     </ChakraProvider>
   </StrictMode>,

@@ -1,10 +1,12 @@
 import { Heading as ChakraHeading } from "@chakra-ui/react";
+import { PiTextH } from "react-icons/pi";
 
 import { useTheme } from "@/hooks/useTheme";
 import { createMapper } from "@/utils/mappers";
 
 export const meta = {
   type: "heading",
+  group: "Content",
   defaultConfig: {
     text: "Lorem ipsum dolor sit amet.",
     textStyle: { fontSize: "md", fontWeight: "normal" },
@@ -17,7 +19,7 @@ export const meta = {
     { key: "textAlign", fieldType: "textAlign", group: "Typography" },
     { key: "margin", fieldType: "margin", group: "Spacing" },
   ],
-  icon: <>Bla</>,
+  icon: <PiTextH />,
 };
 
 export default function Heading({ config }) {

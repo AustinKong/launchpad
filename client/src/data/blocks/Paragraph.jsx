@@ -1,9 +1,11 @@
 import { Text } from "@chakra-ui/react";
+import { PiParagraph } from "react-icons/pi";
 
 import { createMapper } from "@/utils/mappers";
 
 export const meta = {
   type: "paragraph",
+  group: "Content",
   defaultConfig: {
     text: "Lorem ipsum dolor sit amet.",
     textStyle: { fontSize: "md", fontWeight: "normal" },
@@ -16,7 +18,7 @@ export const meta = {
     { key: "textAlign", fieldType: "textAlign", group: "Typography" },
     { key: "margin", fieldType: "margin", group: "Spacing" },
   ],
-  icon: <>Bla</>,
+  icon: <PiParagraph />,
 };
 
 export default function Paragraph({ config }) {

@@ -1,11 +1,12 @@
 import { SegmentGroup } from "@chakra-ui/react";
-import Fieldset from "@/components/Fieldset";
 import {
   PiTextAlignCenter,
   PiTextAlignJustify,
   PiTextAlignLeft,
   PiTextAlignRight,
 } from "react-icons/pi";
+
+import Fieldset from "@/components/Fieldset";
 
 export const meta = {
   fieldType: "textAlign",

@@ -1,7 +1,9 @@
 import { Box, Image as ChakraImage } from "@chakra-ui/react";
+import { PiPlaceholder } from "react-icons/pi";
 
 export const meta = {
   type: "profile banner",
+  group: "banners",
   defaultConfig: {
     profileImage: "https://picsum.photos/200/200",
     bannerImage: "https://picsum.photos/300/100",
@@ -22,7 +24,7 @@ export const meta = {
       aspectRatio: 3 / 1,
     },
   ],
-  icon: <>Banner</>,
+  icon: <PiPlaceholder />,
 };
 
 export default function ProfileBanner({ config }) {

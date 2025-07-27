@@ -1,7 +1,6 @@
 import { deepMerge } from "@launchpad/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef } from "react";
-import { useParams } from "react-router";
 
 import { useCard } from "./useCard";
 
@@ -13,35 +12,32 @@ import {
   useBlockOrderActions,
   useBlockOrders,
 } from "@/stores/blockDraftStore";
+import { blockRegistry } from "@/services/registry";
 
-export function useBlocks() {
-  const { slug } = useParams();
+export function useBlocks({ slug, id }) {
   const prevCardIdRef = useRef(null);
   const queryClient = useQueryClient();
   const blockEdits = useBlockEdits();
   const blockOrders = useBlockOrders();
-  const { editBlock, deleteBlock, createBlock, resetBlockEdits } = useBlockEditActions();
+  const {
+    editBlock,
+    deleteBlock,
+    createBlock: _createBlock,
+    resetBlockEdits,
+  } = useBlockEditActions();
   const { reorderBlocks, resetBlockOrders } = useBlockOrderActions();
 
-  const { card, isLoading: cardIsLoading, isError: cardIsError } = useCard({ slug });
+  const { card, isLoading: cardIsLoading } = useCard({ slug, id });
 
   const { id: cardId, blockOrders: initialBlockOrders } = card || {};
 
-  const {
-    data: blocks,
-    isLoading: blocksIsLoading,
-    isError: blocksIsError,
-  } = useQuery({
+  const { data: blocks, isLoading: blocksIsLoading } = useQuery({
     queryKey: ["blocks", cardId],
     queryFn: () => fetchBlocks(cardId),
     enabled: !!cardId,
   });
 
-  const {
-    mutateAsync: saveBlocks,
-    isLoading: saveIsLoading,
-    isError: saveIsError,
-  } = useMutation({
+  const { mutateAsync: saveBlocks, isLoading: saveIsLoading } = useMutation({
     mutationFn: () =>
       saveCardBlocks({
         id: cardId,
@@ -69,7 +65,6 @@ export function useBlocks() {
   }, [cardId, blocks]);
 
   const isLoading = blocksIsLoading || cardIsLoading;
-  const isError = blocksIsError || cardIsError;
 
   const mergedBlocks = useMemo(() => {
     if (!blocks || !blockOrders) return [];
@@ -81,12 +76,18 @@ export function useBlocks() {
     });
   }, [blocks, blockOrders, blockEdits]);
 
+  function createBlock(type) {
+    const { meta } = blockRegistry.get(type);
+    _createBlock({
+      type: meta.type,
+      config: meta.defaultConfig,
+    });
+  }
+
   return {
     blocks: mergedBlocks || [],
     isLoading,
-    isError,
     saveIsLoading,
-    saveIsError,
 
     editBlock,
     deleteBlock,

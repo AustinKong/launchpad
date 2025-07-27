@@ -5,13 +5,7 @@
  * Internally connects to a UI render function registered once at app root.
  */
 export default class ConfirmationController {
-  constructor() {
-    /**
-     * @private
-     * @type {(options: object, resolve: (value: boolean) => void) => void | null}
-     */
-    this._showDialog = null;
-  }
+  #showDialog = null;
 
   /**
    * Prompts the user with a confirmation dialog and resolves to their choice.
@@ -27,8 +21,8 @@ export default class ConfirmationController {
    */
   create(options) {
     return new Promise((resolve) => {
-      if (this._showDialog) {
-        this._showDialog(options, resolve);
+      if (this.#showDialog) {
+        this.#showDialog(options, resolve);
       } else {
         throw new Error("Confirmation dialog not mounted");
       }
@@ -40,6 +34,6 @@ export default class ConfirmationController {
    * @param {(options: object, resolve: (value: boolean) => void) => void} showDialog
    */
   register(showDialog) {
-    this._showDialog = showDialog;
+    this.#showDialog = showDialog;
   }
 }

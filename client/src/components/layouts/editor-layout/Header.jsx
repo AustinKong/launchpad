@@ -1,8 +1,9 @@
-import { HStack, Spacer, Tabs, Button } from "@chakra-ui/react";
+import { HStack, Spacer, Tabs, Button, Box } from "@chakra-ui/react";
 import { PiCaretRight, PiShare } from "react-icons/pi";
 import { NavLink, useParams } from "react-router";
 
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { ColorModeButton } from "@/components/chakra/color-mode";
 
 const TABS = [
   { label: "Blocks", value: "blocks" },
@@ -14,9 +15,18 @@ export default function Header() {
   const { slug } = useParams();
 
   return (
-    <HStack as="header" h="12" p="2" alignItems="center" gap="2" bgColor="bg.panel">
-      <Breadcrumb separator={<PiCaretRight />} size="md" />
-      <Spacer />
+    <HStack
+      as="header"
+      h="12"
+      p="2"
+      alignItems="center"
+      gap="2"
+      bgColor="bg.panel"
+      justifyContent="space-between"
+    >
+      <Box flex="1">
+        <Breadcrumb separator={<PiCaretRight />} size="md" />
+      </Box>
       <Tabs.Root defaultValue="blocks" variant="enclosed" size="sm">
         <Tabs.List>
           {TABS.map(({ label, value }) => (
@@ -26,10 +36,12 @@ export default function Header() {
           ))}
         </Tabs.List>
       </Tabs.Root>
-      <Spacer />
-      <Button size="sm" colorPalette="blue">
-        Preview <PiShare />
-      </Button>
+      <HStack flex="1" justifyContent="flex-end">
+        <ColorModeButton />
+        <Button size="sm" colorPalette="blue">
+          Preview <PiShare />
+        </Button>
+      </HStack>
     </HStack>
   );
 }

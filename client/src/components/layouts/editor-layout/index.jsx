@@ -12,7 +12,7 @@ export default function EditorLayout() {
         <Header />
         <HStack h="full" py="2" px="1">
           <LeftPanel />
-          <Box as="main" flex="1" overflowY="auto">
+          <Box as="main" flex="1" overflowY="auto" h="full">
             <Outlet />
           </Box>
           <RightPanel />

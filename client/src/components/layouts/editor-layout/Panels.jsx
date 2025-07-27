@@ -9,7 +9,7 @@ function Panel({ panel }) {
   if (!panel || panel.length === 0) return null;
 
   return (
-    <Card.Root h="full" w="sm" as="aside">
+    <Card.Root h="full" w="sm" as="aside" size="sm">
       <Tabs.RootProvider variant="plain" value={tabs}>
         <Card.Header as={HStack} p="0">
           <Tabs.List pointerEvents={panel.length === 1 ? "none" : "auto"}>
@@ -24,9 +24,9 @@ function Panel({ panel }) {
             <PiSidebarSimple />
           </IconButton>
         </Card.Header>
-        <Card.Body>
+        <Card.Body p="0">
           {panel.map(({ content }, index) => (
-            <Tabs.Content value={index} key={index} as="div">
+            <Tabs.Content value={index} key={index} p="0">
               {content}
             </Tabs.Content>
           ))}
