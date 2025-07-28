@@ -8,6 +8,7 @@ import { useReadonlyTheme } from "@/hooks/readonly/useReadonlyTheme";
 import { useBlocks } from "@/hooks/useBlocks";
 import BlockList from "./BlockList";
 import BlockDetails from "./BlockDetails";
+import GridEditor from "./GridEditor";
 
 export default function BlockEditorPage() {
   const [selectedBlockId, setSelectedBlockId] = useState(null);
@@ -33,12 +34,14 @@ export default function BlockEditorPage() {
         </LeftPanel.Tab>
       </LeftPanel>
 
-      <CardPreview
+      <GridEditor blocks={blocks} />
+
+      {/* <CardPreview
         theme={theme}
         blocks={blocks}
         reorderBlocks={reorderBlocks}
         setSelectedBlockId={setSelectedBlockId}
-      />
+      /> */}
 
       <RightPanel>
         <RightPanel.Tab label="Details">
