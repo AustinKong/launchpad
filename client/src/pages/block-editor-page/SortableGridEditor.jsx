@@ -4,6 +4,7 @@ import { arrayMove, SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useRef, useState } from "react";
 
 import { blockRegistry } from "@/services/registry";
+import { useSensors } from "@/utils/dragAndDrop";
 
 const GROUPS = [
   {
@@ -85,6 +86,12 @@ const COL_WIDTH = (TOTAL_WIDTH - TOTAL_GAPS) / NUM_COLS;
 export default function SortableGridEdtior() {
   const [blocks, setBlocks] = useState(BLOCKS);
   const [groups, setGroups] = useState(GROUPS);
+  const [hoveredGroupId, setHoveredGroupId] = useState(null);
+  const [hoveredBlockId, setHoveredBlockId] = useState(null);
+  const [selected, setSelected] = useState({
+    id: null,
+    type: null, // "block" | "group"
+  });
   const resizingRef = useRef({
     blockId: null,
     original: { colStart: 0, colEnd: 0, rowStart: 0, rowEnd: 0 },
@@ -291,8 +298,15 @@ export default function SortableGridEdtior() {
     }
   }
 
+  const sensors = useSensors();
+
   return (
-    <DndContext onDragEnd={handleDragEnd} onDragMove={handleDragMove} onDragStart={handleDragStart}>
+    <DndContext
+      onDragEnd={handleDragEnd}
+      onDragMove={handleDragMove}
+      onDragStart={handleDragStart}
+      sensors={sensors}
+    >
       <Center h="full">
         <Box width={TOTAL_WIDTH} height="500px" bgColor="gray.900" position="relative">
           <SortableContext items={groups.map((group) => group.id)}>
@@ -301,6 +315,12 @@ export default function SortableGridEdtior() {
                 key={group.id}
                 group={group}
                 blocks={blocks.filter((block) => block.groupId === group.id)}
+                selected={selected}
+                setSelected={setSelected}
+                hoveredGroupId={hoveredGroupId}
+                setHoveredGroupId={setHoveredGroupId}
+                hoveredBlockId={hoveredBlockId}
+                setHoveredBlockId={setHoveredBlockId}
               />
             ))}
           </SortableContext>
@@ -311,7 +331,16 @@ export default function SortableGridEdtior() {
   );
 }
 
-function Group({ group, blocks }) {
+function Group({
+  group,
+  blocks,
+  selected,
+  setSelected,
+  hoveredGroupId,
+  setHoveredGroupId,
+  hoveredBlockId,
+  setHoveredBlockId,
+}) {
   const {
     attributes,
     listeners,
@@ -319,13 +348,18 @@ function Group({ group, blocks }) {
     transform,
     transition,
   } = useSortable({ id: group.id, data: { type: "group" } });
-  const { setNodeRef: setDroppableRef } = useDroppable({ id: group.id, data: { type: "group" } });
+  const { setNodeRef: setDroppableRef, isOver: isOverGroup } = useDroppable({
+    id: group.id,
+    data: { type: "group" },
+  });
 
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
     height: `${group.rowSpan * ROW_HEIGHT}px`,
   };
+
+  const isGroupHovered = hoveredGroupId === group.id && hoveredBlockId === null;
 
   return (
     <Box
@@ -341,22 +375,44 @@ function Group({ group, blocks }) {
       data-component-name={`group:${group.id}`}
       // className="group" // className not role
       style={style}
+      // outline="2px solid"
+      // outlineColor="transparent"
       outline="2px solid"
-      outlineColor="transparent"
+      outlineColor={
+        isOverGroup || isGroupHovered || (selected.type === "group" && selected.id === group.id)
+          ? "blue.500"
+          : "transparent"
+      }
       // _hover={{ outlineColor: "border.info" }}
-      css={{
-        outline: "2px solid transparent",
-        // only apply outline when parent is hovered, but none of its children are
-        [`&:hover:not(:has(*:hover))`]: {
-          outlineColor: "var(--chakra-colors-border-info)",
-        },
+      // css={{
+      //   outline: "2px solid transparent",
+      //   // only apply outline when parent is hovered, but none of its children are
+      //   [`&:hover:not(:has(*:hover))`]: {
+      //     outlineColor: "var(--chakra-colors-border-info)",
+      //   },
+      // }}
+      onPointerDown={(event) => {
+        setSelected({ id: group.id, type: "group" });
+        listeners.onPointerDown(event);
       }}
+      onPointerEnter={() => setHoveredGroupId(group.id)}
+      onPointerLeave={() => setHoveredGroupId(null)}
     >
       {blocks.map((block) => (
-        <Block key={block.id} block={block} />
+        <Block
+          key={block.id}
+          block={block}
+          selected={selected}
+          setSelected={setSelected}
+          hoveredBlockId={hoveredBlockId}
+          setHoveredBlockId={setHoveredBlockId}
+        />
       ))}
-      {/* <GroupResizeHandle groupId={group.id} direction="n" />
-      <GroupResizeHandle groupId={group.id} direction="s" /> */}
+      {selected.type === "group" &&
+        selected.id === group.id && [
+          <GroupResizeHandle groupId={group.id} direction="n" key="northHandle" />,
+          <GroupResizeHandle groupId={group.id} direction="s" key="southHandle" />,
+        ]}
       <Box
         position="absolute"
         top="0"
@@ -368,15 +424,19 @@ function Group({ group, blocks }) {
         px="1"
         py="0.5"
         zIndex="10"
-        visibility="hidden"
-        css={{
-          // [`[data-component-name="group:${group.id}"]:hover &`]: {
-          //   visibility: "visible",
-          // },
-          [`[data-component-name="group:${group.id}"]:hover:not(:has(*:hover)) &`]: {
-            visibility: "visible",
-          },
-        }}
+        visibility={
+          isOverGroup || isGroupHovered || (selected.type === "group" && selected.id === group.id)
+            ? "visible"
+            : "hidden"
+        }
+        // css={{
+        //   // [`[data-component-name="group:${group.id}"]:hover &`]: {
+        //   //   visibility: "visible",
+        //   // },
+        //   [`[data-component-name="group:${group.id}"]:hover:not(:has(*:hover)) &`]: {
+        //     visibility: "visible",
+        //   },
+        // }}
       >
         {group.id}
       </Box>
@@ -384,7 +444,7 @@ function Group({ group, blocks }) {
   );
 }
 
-function Block({ block }) {
+function Block({ block, selected, setSelected, hoveredBlockId, setHoveredBlockId }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: block.id,
     data: { type: "block" },
@@ -403,6 +463,8 @@ function Block({ block }) {
     top: `${block.rowStart * ROW_HEIGHT}px`,
   };
 
+  const isBlockHovered = hoveredBlockId === block.id;
+
   return (
     <Center
       {...attributes}
@@ -410,16 +472,34 @@ function Block({ block }) {
       ref={setNodeRef}
       style={style}
       outline="2px solid"
-      outlineColor="transparent"
+      outlineColor={
+        isBlockHovered || (selected.type === "block" && selected.id === block.id)
+          ? "blue.500"
+          : "transparent"
+      }
       position="absolute"
-      _hover={{ outlineColor: "border.info" }}
-      data-component-name={`block:${block.id}`}
+      // _hover={{ outlineColor: "border.info" }}
+      // data-component-name={`block:${block.id}`}
+      onPointerDown={(event) => {
+        // prevent groups handler from being triggered
+        // This is always picked first over group onPointerDown handler because
+        // this is a child of the group and is deeper in the DOM tree
+        event.stopPropagation();
+        setSelected({ id: block.id, type: "block" });
+        listeners.onPointerDown(event);
+      }}
+      onPointerEnter={() => setHoveredBlockId(block.id)}
+      onPointerLeave={() => setHoveredBlockId(null)}
+      zIndex="10"
     >
       <Component config={block.config} />
-      <ResizeHandle blockId={block.id} direction="n" />
-      <ResizeHandle blockId={block.id} direction="s" />
-      <ResizeHandle blockId={block.id} direction="w" />
-      <ResizeHandle blockId={block.id} direction="e" />
+      {selected.type === "block" &&
+        selected.id === block.id && [
+          <ResizeHandle key="northHandle" blockId={block.id} direction="n" />,
+          <ResizeHandle key="southHandle" blockId={block.id} direction="s" />,
+          <ResizeHandle key="westHandle" blockId={block.id} direction="w" />,
+          <ResizeHandle key="eastHandle" blockId={block.id} direction="e" />,
+        ]}
       <Box
         position="absolute"
         top="0"
@@ -431,12 +511,16 @@ function Block({ block }) {
         px="1"
         py="0.5"
         zIndex="10"
-        visibility="hidden"
-        css={{
-          [`[data-component-name="block:${block.id}"]:hover &`]: {
-            visibility: "visible",
-          },
-        }}
+        visibility={
+          isBlockHovered || (selected.type === "block" && selected.id === block.id)
+            ? "visible"
+            : "hidden"
+        }
+        // css={{
+        //   [`[data-component-name="block:${block.id}"]:hover &`]: {
+        //     visibility: "visible",
+        //   },
+        // }}
       >
         {block.type}
       </Box>

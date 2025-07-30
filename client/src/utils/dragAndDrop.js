@@ -41,8 +41,8 @@ export function useSensors() {
   return useSensorsDndKit(
     useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 150,
-        tolerance: 300,
+        delay: 100,
+        tolerance: 100,
       },
     }),
   );
