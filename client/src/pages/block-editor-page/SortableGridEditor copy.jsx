@@ -132,21 +132,77 @@ export default function SortableGridEdtior() {
       });
     }
 
-    if (active.data.current.type === "block" && dragPreview) {
-      const { groupId, colStart, rowStart, width, height } = dragPreview;
+    if (active.data.current.type === "block" && over.data.current.type === "group") {
+      // reassign block to group
+      // if (active.groupId !== over.id) {
+      //   setBlocks((prev) =>
+      //     prev.map((block) => (block.id === active.id ? { ...block, groupId: over.id } : block)),
+      //   );
+      // }
+
+      // // update position
+      // const leftInNewGroup = over.rect.left - active.rect.current.translated.left;
+      // const topInNewGroup = over.rect.top - active.rect.current.translated.top;
+
+      // const newColStart = Math.round(-leftInNewGroup / (COL_WIDTH + COL_GAP));
+      // const newRowStart = Math.round(-topInNewGroup / ROW_HEIGHT);
+
+      // setBlocks((prev) =>
+      //   prev.map((block) => {
+      //     if (block.id !== active.id) return block;
+
+      //     const width = block.colEnd - block.colStart;
+      //     const height = block.rowEnd - block.rowStart;
+
+      //     return {
+      //       ...block,
+      //       colStart: newColStart,
+      //       colEnd: newColStart + width,
+      //       rowStart: newRowStart,
+      //       rowEnd: newRowStart + height,
+      //     };
+      //   }),
+      // );
+      const targetGroup = groups.find((g) => g.id === over.id);
+      const oldBlock = blocks.find((b) => b.id === active.id);
+      const width = oldBlock.colEnd - oldBlock.colStart;
+      const height = oldBlock.rowEnd - oldBlock.rowStart;
+
+      if (height > targetGroup.rowSpan) {
+        setDragPreview({
+          groupId: oldBlock.groupId,
+          colStart: oldBlock.colStart,
+          rowStart: oldBlock.rowStart,
+          width,
+          height,
+        });
+        return;
+      }
+
+      // compute & clamp the drop position exactly as we do in handleDragMove:
+      const leftInNewGroup = over.rect.left - active.rect.current.translated.left;
+      const topInNewGroup = over.rect.top - active.rect.current.translated.top;
+
+      let colStart = Math.round(-leftInNewGroup / (COL_WIDTH + COL_GAP));
+      let rowStart = Math.round(-topInNewGroup / ROW_HEIGHT);
+
+      // clamp into valid range
+      colStart = Math.max(0, Math.min(NUM_COLS - width, colStart));
+      rowStart = Math.max(0, Math.min(targetGroup.rowSpan - height, rowStart));
+
+      // commit the move
       setBlocks((prev) =>
-        prev.map((block) =>
-          block.id === active.id
-            ? {
-                ...block,
-                groupId,
-                colStart,
-                colEnd: colStart + width,
-                rowStart,
-                rowEnd: rowStart + height,
-              }
-            : block,
-        ),
+        prev.map((block) => {
+          if (block.id !== active.id) return block;
+          return {
+            ...block,
+            groupId: over.id,
+            colStart,
+            colEnd: colStart + width,
+            rowStart,
+            rowEnd: rowStart + height,
+          };
+        }),
       );
     }
 
@@ -216,28 +272,43 @@ export default function SortableGridEdtior() {
       const width = blk.colEnd - blk.colStart;
       const height = blk.rowEnd - blk.rowStart;
 
-      // only update preview when the block actually fits in this group
-      if (height <= targetGroup.rowSpan) {
-        // figure out colStart / rowStart as before
-        const leftInNewGroup = over.rect.left - active.rect.current.translated.left;
-        const topInNewGroup = over.rect.top - active.rect.current.translated.top;
-        let colStart = Math.round(-leftInNewGroup / (COL_WIDTH + COL_GAP));
-        let rowStart = Math.round(-topInNewGroup / ROW_HEIGHT);
-
-        // clamp into valid bounds
-        colStart = Math.max(0, Math.min(NUM_COLS - width, colStart));
-        rowStart = Math.max(0, Math.min(targetGroup.rowSpan - height, rowStart));
-
+      // ── If block is taller than this group, snap preview to original:
+      if (height > targetGroup.rowSpan) {
         setDragPreview({
-          groupId: over.id,
-          colStart,
-          rowStart,
+          groupId: blk.groupId,
+          colStart: blk.colStart,
+          rowStart: blk.rowStart,
           width,
           height,
         });
+        return;
       }
-      // if it doesn’t fit, do *nothing* – keep the last valid preview
-      return;
+
+      // ── **NEW**: if this block is taller than the group's rowSpan, cancel preview
+      if (height > targetGroup.rowSpan) {
+        setDragPreview(null);
+        return;
+      }
+
+      // find pointer’s offset into group
+      const leftInNewGroup = over.rect.left - active.rect.current.translated.left;
+      const topInNewGroup = over.rect.top - active.rect.current.translated.top;
+
+      let colStart = Math.round(-leftInNewGroup / (COL_WIDTH + COL_GAP));
+      let rowStart = Math.round(-topInNewGroup / ROW_HEIGHT);
+
+      // clamp into group
+      colStart = Math.max(0, Math.min(NUM_COLS - width, colStart));
+      rowStart = Math.max(0, Math.min(targetGroup.rowSpan - height, rowStart));
+
+      setDragPreview({
+        groupId: over.id,
+        colStart,
+        rowStart,
+        width,
+        height,
+      });
+      return; // skip the rest
     }
 
     // otherwise clear it
