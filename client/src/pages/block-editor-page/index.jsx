@@ -9,6 +9,7 @@ import { useBlocks } from "@/hooks/useBlocks";
 import BlockList from "./BlockList";
 import BlockDetails from "./BlockDetails";
 import GridEditor from "./GridEditor";
+import SortableGridEdtior from "./SortableGridEditor";
 
 export default function BlockEditorPage() {
   const [selectedBlockId, setSelectedBlockId] = useState(null);
@@ -34,7 +35,8 @@ export default function BlockEditorPage() {
         </LeftPanel.Tab>
       </LeftPanel>
 
-      <GridEditor blocks={blocks} />
+      {/* <GridEditor blocks={blocks} /> */}
+      <SortableGridEdtior />
 
       {/* <CardPreview
         theme={theme}

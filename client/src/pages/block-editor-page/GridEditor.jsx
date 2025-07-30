@@ -74,7 +74,7 @@ export default function GridEditor() {
 
   function handleDragEnd(event) {
     const { active, delta } = event;
-    console.log(delta);
+    console.log(active);
     const block = blocks.find((b) => b.id === active.id);
     if (!block) return;
 
