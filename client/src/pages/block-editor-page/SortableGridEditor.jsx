@@ -337,15 +337,49 @@ function Group({ group, blocks }) {
       }}
       {...attributes}
       {...listeners}
+      // https://github.com/chakra-ui/chakra-ui/discussions/4485
+      data-component-name={`group:${group.id}`}
+      // className="group" // className not role
       style={style}
-      outline="1px solid"
-      outlineColor="border.info"
+      outline="2px solid"
+      outlineColor="transparent"
+      // _hover={{ outlineColor: "border.info" }}
+      css={{
+        outline: "2px solid transparent",
+        // only apply outline when parent is hovered, but none of its children are
+        [`&:hover:not(:has(*:hover))`]: {
+          outlineColor: "var(--chakra-colors-border-info)",
+        },
+      }}
     >
       {blocks.map((block) => (
         <Block key={block.id} block={block} />
       ))}
-      <GroupResizeHandle groupId={group.id} direction="n" />
-      <GroupResizeHandle groupId={group.id} direction="s" />
+      {/* <GroupResizeHandle groupId={group.id} direction="n" />
+      <GroupResizeHandle groupId={group.id} direction="s" /> */}
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        transform="translateY(-100%)"
+        bg="blue.500"
+        color="white"
+        fontSize="xs"
+        px="1"
+        py="0.5"
+        zIndex="10"
+        visibility="hidden"
+        css={{
+          // [`[data-component-name="group:${group.id}"]:hover &`]: {
+          //   visibility: "visible",
+          // },
+          [`[data-component-name="group:${group.id}"]:hover:not(:has(*:hover)) &`]: {
+            visibility: "visible",
+          },
+        }}
+      >
+        {group.id}
+      </Box>
     </Box>
   );
 }
@@ -375,16 +409,37 @@ function Block({ block }) {
       {...listeners}
       ref={setNodeRef}
       style={style}
-      outline="1px solid"
-      outlineColor="border.error"
+      outline="2px solid"
+      outlineColor="transparent"
       position="absolute"
-      overflow="hidden"
+      _hover={{ outlineColor: "border.info" }}
+      data-component-name={`block:${block.id}`}
     >
       <Component config={block.config} />
       <ResizeHandle blockId={block.id} direction="n" />
       <ResizeHandle blockId={block.id} direction="s" />
       <ResizeHandle blockId={block.id} direction="w" />
       <ResizeHandle blockId={block.id} direction="e" />
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        transform="translateY(-100%)"
+        bg="blue.500"
+        color="white"
+        fontSize="xs"
+        px="1"
+        py="0.5"
+        zIndex="10"
+        visibility="hidden"
+        css={{
+          [`[data-component-name="block:${block.id}"]:hover &`]: {
+            visibility: "visible",
+          },
+        }}
+      >
+        {block.type}
+      </Box>
     </Center>
   );
 }
